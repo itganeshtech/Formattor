@@ -20,3 +20,36 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+/* Fancy sparkling multi-color effect with dark colors */
+.fancy-heading {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    background: linear-gradient(90deg, #4b0082, /* Indigo */
+    #2c3e50, /* Dark Blue */
+    #8e44ad, /* Dark Purple */
+    #4b0082 /* Loop back to Indigo */
+    );
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: sparkle 6s infinite linear;
+    text-shadow: 0 0 10px rgba(75, 0, 130, 0.5), 0 0 20px rgba(44, 62, 80, 0.5);
+}
+
+/* Sparkling animation effect */
+@keyframes sparkle {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
