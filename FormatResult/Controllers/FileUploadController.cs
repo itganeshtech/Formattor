@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using FormatModals;
 using FormatResult.Models;
 
 namespace FormatResult.Controllers;
@@ -7,22 +8,57 @@ namespace FormatResult.Controllers;
 public class FileUploadController : Controller
 {
     private readonly ILogger<FileUploadController> _logger;
-
-    public FileUploadController(ILogger<FileUploadController> logger)
+    private readonly IWebHostEnvironment _environment;
+    public FileUploadController(ILogger<FileUploadController> logger, IWebHostEnvironment environment)
     {
         _logger = logger;
+        _environment = environment;
     }
     [HttpGet]
     public IActionResult Index()
     {
-        return View();
+            return View();
     }
 
+    // POST: File/Upload
     [HttpPost]
-    public IActionResult Index(string file)
+    public async Task<IActionResult> Upload(IFormFile file)
+
     {
-        return View();
+
+        if (file != null && file.Length > 0)
+        {
+            var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var filePath = Path.Combine(uploadsFolder, file.FileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Redirect to Success Page
+            return RedirectToAction("Success", new { fileName = file.FileName });
+        }
+
+        return View("Index");
+
     }
+
+    // GET: File/Success
+    public IActionResult Success(string fileName)
+    {
+        var model = new FileUploadViewModel
+        {
+            FileName = fileName
+        };
+        return View(model);
+    }
+
+
     public IActionResult GsIntro()
     {
         return View();

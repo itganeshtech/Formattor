@@ -1,0 +1,12 @@
+﻿@model FormatModals.FileUploadViewModel
+@{
+    ViewData["Title"] = "Upload Successful";
+}
+
+<div class="container">
+    <div class="card">
+        <h2> Uploaded Successfully!</h2>
+        <p>File Name: <strong>@Model.FileName</strong></p>
+        <a href="/File/Index" class="btn">Upload Another File</a>
+    </div>
+</div>

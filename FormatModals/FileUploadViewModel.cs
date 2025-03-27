@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FormatModals
 {
-    class FileUploadViewModel
+    public class FileUploadViewModel
     {
         public string FileName { get; set; }
     }
