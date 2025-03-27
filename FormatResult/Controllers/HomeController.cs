@@ -12,8 +12,14 @@ public class HomeController : Controller
     {
         _logger = logger;
     }
-
+    [HttpGet]
     public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Index(string file)
     {
         return View();
     }
