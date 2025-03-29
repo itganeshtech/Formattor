@@ -48,10 +48,8 @@ public class FileUploadController : Controller
             // Serialize the schoolResult object to JSON and store it in TempData
             TempData["SchoolResult"] = JsonConvert.SerializeObject(schoolResult);
 
-
             // Redirect to Success Page
-            return RedirectToAction("Success", "FileUpload", new { fileName = HttpUtility.UrlEncode(uploadedFile.FileName) });
-
+            return RedirectToAction("Success", "FileUpload", new { fileName = HttpUtility.UrlEncode(uploadedFile.FileName) });           
         }
 
         return View("Index");
@@ -62,7 +60,8 @@ public class FileUploadController : Controller
     public IActionResult Success(string fileName)
     {
         // Deserialize the JSON string back to SchoolResult object
-        var schoolResultJson = TempData["SchoolResult"] as string;
+        var schoolResultJson = TempData["SchoolResult"]  as string;
+        
         var schoolResult = schoolResultJson != null
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
