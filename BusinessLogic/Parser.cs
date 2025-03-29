@@ -1,31 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using FormatModals;
 
-namespace FormatResult.BusinessLogic
+namespace BusinessLogic
 {
-    public class SchoolResult
-    {
-        public string Date { get; set; }
-        public string BoardName { get; set; }
-        public string Region { get; set; }
-        public string SchoolCode { get; set; }
-        public string SchoolName { get; set; }
-        public List<Student> Students { get; set; } = new();
-    }
-
-    public class Student
-    {
-        public string RollNumber { get; set; }
-        public string Name { get; set; }
-        public string Gender { get; set; }
-        public string OverallResult { get; set; }
-        public Dictionary<string, (string SubjectName, int Marks, string Grade)> Subjects { get; set; } = new();
-    }
-
-    public class Parser
+   public class Parser
     {
         private static readonly Dictionary<string, string> SubjectLookup = new()
         {

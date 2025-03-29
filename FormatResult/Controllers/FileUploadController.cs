@@ -1,8 +1,10 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using BusinessLogic;
 using FormatModals;
 using FormatResult.Models;
-using FormatResult.BusinessLogic;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Web;
 
 namespace FormatResult.Controllers;
 
@@ -18,7 +20,7 @@ public class FileUploadController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-            return View();
+        return View();
     }
 
     // POST: File/Upload
@@ -26,7 +28,7 @@ public class FileUploadController : Controller
     public async Task<IActionResult> Upload(IFormFile uploadedFile)
 
     {
-
+        // string file = uploadedFile.FileName.Replace(" ", "");
         if (uploadedFile != null && uploadedFile.Length > 0)
         {
             var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
@@ -40,11 +42,16 @@ public class FileUploadController : Controller
             {
                 await uploadedFile.CopyToAsync(stream);
             }
+            // Parse the file and get schoolResult
+            var schoolResult = Parser.ParseFile(filePath);
 
-           var schoolResult = Parser.ParseFile(filePath);
+            // Serialize the schoolResult object to JSON and store it in TempData
+            TempData["SchoolResult"] = JsonConvert.SerializeObject(schoolResult);
+
 
             // Redirect to Success Page
-            return RedirectToAction("Success", new { fileName = uploadedFile.FileName });
+            return RedirectToAction("Success", "FileUpload", new { fileName = HttpUtility.UrlEncode(uploadedFile.FileName) });
+
         }
 
         return View("Index");
@@ -54,10 +61,18 @@ public class FileUploadController : Controller
     // GET: File/Success
     public IActionResult Success(string fileName)
     {
+        // Deserialize the JSON string back to SchoolResult object
+        var schoolResultJson = TempData["SchoolResult"] as string;
+        var schoolResult = schoolResultJson != null
+            ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
+            : new SchoolResult(); // Fallback if nothing is passed
+
         var model = new FileUploadViewModel
         {
-            FileName = fileName
+            FileName = fileName,
+            SchoolResult = schoolResult
         };
+
         return View(model);
     }
 
@@ -70,7 +85,7 @@ public class FileUploadController : Controller
     {
         return View();
     }
-    
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

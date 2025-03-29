@@ -3,10 +3,23 @@
     ViewData["Title"] = "Upload Successful";
 }
 
-<div class="container">
-    <div class="card">
-        <h2> Uploaded Successfully!</h2>
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-success"> Uploaded Successfully!</h2>
         <p>File Name: <strong>@Model.FileName</strong></p>
-        <a href="/File/Index" class="btn">Upload Another File</a>
+        <p>School Name: <strong>@Model.SchoolResult.SchoolName</strong></p>
+        <p>Total Number of Students Enrolled: <strong>@Model.SchoolResult.Students.Count</strong></p>
+
+        <div class="mt-4">
+            <!-- Button 1: Upload Another File -->
+            <a href="" class="btn btn-primary me-2">First Three toppers</a>
+
+            <!-- Button 2: Download Result as Excel -->
+            <a href="" class="btn btn-success me-2">Percentage wise count</a>
+
+            <!-- Button 3: View Summary -->
+            <a href="" class="btn btn-info me-2">Subject wise topers</a>            
+        </div>
     </div>
 </div>
+
