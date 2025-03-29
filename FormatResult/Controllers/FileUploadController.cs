@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using FormatModals;
 using FormatResult.Models;
+using FormatResult.BusinessLogic;
 
 namespace FormatResult.Controllers;
 
@@ -22,11 +23,11 @@ public class FileUploadController : Controller
 
     // POST: File/Upload
     [HttpPost]
-    public async Task<IActionResult> Upload(IFormFile file)
+    public async Task<IActionResult> Upload(IFormFile uploadedFile)
 
     {
 
-        if (file != null && file.Length > 0)
+        if (uploadedFile != null && uploadedFile.Length > 0)
         {
             var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
             if (!Directory.Exists(uploadsFolder))
@@ -34,14 +35,16 @@ public class FileUploadController : Controller
                 Directory.CreateDirectory(uploadsFolder);
             }
 
-            var filePath = Path.Combine(uploadsFolder, file.FileName);
+            var filePath = Path.Combine(uploadsFolder, uploadedFile.FileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await file.CopyToAsync(stream);
+                await uploadedFile.CopyToAsync(stream);
             }
 
+           var schoolResult = Parser.ParseFile(filePath);
+
             // Redirect to Success Page
-            return RedirectToAction("Success", new { fileName = file.FileName });
+            return RedirectToAction("Success", new { fileName = uploadedFile.FileName });
         }
 
         return View("Index");
