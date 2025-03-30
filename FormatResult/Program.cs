@@ -12,7 +12,13 @@ builder.Services.AddControllersWithViews()
     })
     .AddSessionStateTempDataProvider();
 
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(12); // Set timeout duration
+    options.Cookie.HttpOnly = true;  // Secure cookie
+    options.Cookie.IsEssential = true; // Ensures session works even if cookies are restricted
+});
+
 
 var app = builder.Build();
 

@@ -46,7 +46,9 @@ public class FileUploadController : Controller
             var schoolResult = Parser.ParseFile(filePath);
 
             // Serialize the schoolResult object to JSON and store it in TempData
-            TempData["SchoolResult"] = JsonConvert.SerializeObject(schoolResult);
+            //TempData["SchoolResult"] = JsonConvert.SerializeObject(schoolResult);
+
+            HttpContext.Session.SetString("SchoolResult", JsonConvert.SerializeObject(schoolResult));
 
             // Redirect to Success Page
             return RedirectToAction("Success", "FileUpload", new { fileName = HttpUtility.UrlEncode(uploadedFile.FileName) });           
@@ -60,8 +62,10 @@ public class FileUploadController : Controller
     public IActionResult Success(string fileName)
     {
         // Deserialize the JSON string back to SchoolResult object
-        var schoolResultJson = TempData["SchoolResult"]  as string;
-        
+        //var schoolResultJson = TempData["SchoolResult"]  as string;
+
+        var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
+
         var schoolResult = schoolResultJson != null
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
@@ -85,6 +89,21 @@ public class FileUploadController : Controller
         return View();
     }
 
+    public IActionResult GetFirstThreeToppers()
+    {
+        // Deserialize the JSON string back to SchoolResult object
+        var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
+
+        var schoolResult = schoolResultJson != null
+            ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
+            : new SchoolResult(); // Fallback if nothing is passed
+
+        // Simulating getting the top 3 students
+        var toppers = schoolResult.Students.OrderByDescending(x => x.Percentage).Take(3)
+            .ToList();
+
+        return PartialView("_ToppersPartial", toppers);
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
