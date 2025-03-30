@@ -29,7 +29,7 @@ namespace FormatModals
                             sum += item.Value.Marks;
                         }
 
-                        _percentage = sum / 5;
+                        _percentage = sum / Subjects.Count;
                     }
                 }
 
