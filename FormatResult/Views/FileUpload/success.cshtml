@@ -12,7 +12,7 @@
 
         <div class="mt-4">
             <!-- Button 1: Upload Another File -->
-            <a href="" class="btn btn-primary me-2">First Three toppers</a>
+            <a href="javascript:void(0);" id="btnToppers" class="btn btn-primary me-2">First Three Toppers</a>
 
             <!-- Button 2: Download Result as Excel -->
             <a href="" class="btn btn-success me-2">Percentage wise count</a>
@@ -23,3 +23,23 @@
     </div>
 </div>
 
+
+<div class="container mt-5" id="resultview"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnToppers").click(function () {
+            $.ajax({
+                url: '@Url.Action("GetFirstThreeToppers", "FileUpload")',
+                type: 'GET',
+                success: function (data) {
+                    $("#resultview").html(data);
+                },
+                error: function () {
+                    $("#resultview").html('<p class="text-danger">Error loading data.</p>');
+                }
+            });
+        });
+    });
+</script>
