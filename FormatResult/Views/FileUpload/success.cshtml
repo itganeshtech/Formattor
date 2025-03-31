@@ -15,10 +15,10 @@
             <a href="javascript:void(0);" id="btnToppers" class="btn btn-primary me-2">First Three Toppers</a>
 
             <!-- Button 2: Download Result as Excel -->
-            <a href="" class="btn btn-success me-2">Percentage wise count</a>
+            <a href="javascript:void(0);" id="btnPercent" class="btn btn-success me-2">Percentage wise count</a>
 
             <!-- Button 3: View Summary -->
-            <a href="" class="btn btn-info me-2">Subject wise topers</a>            
+            <a href="javascript:void(0)" id="btnSubjectWiseTopper" class="btn btn-info me-2">Subject wise topers</a>
         </div>
     </div>
 </div>
@@ -29,6 +29,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
+
         $("#btnToppers").click(function () {
             $.ajax({
                 url: '@Url.Action("GetFirstThreeToppers", "FileUpload")',
@@ -41,5 +42,33 @@
                 }
             });
         });
+        
+        $("#btnPercent").click(function () {
+        $.ajax({
+            url: '@Html.Raw(Url.Action("GetPercent", "FileUpload"))',
+            type: 'GET',
+            success: function (data) {
+                $("#resultview").html(data);
+            },
+            error: function () {
+                $("#resultview").html('<p class="text-danger">Error loading data.</p>');
+            }
+        });
+    });
+
+     $("#btnSubjectWiseTopper").click(function () {
+        $.ajax({
+            url: '@Html.Raw(Url.Action("TestLinq", "FileUpload"))',
+            type: 'GET',
+            success: function (data) {
+                $("#resultview").html(data);
+            },
+            error: function () {
+                $("#resultview").html('<p class="text-danger">Error loading data.</p>');
+            }
+        });
+    });
+
+
     });
 </script>
