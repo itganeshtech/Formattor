@@ -9,63 +9,59 @@
         <p>File Name: <strong>@Model.FileName</strong></p>
         <p>School Name: <strong>@Model.SchoolResult.SchoolName</strong></p>
         <p>Total Number of Students Enrolled: <strong>@Model.SchoolResult.Students.Count</strong></p>
-
-        <div class="mt-4">
-            <!-- Button 1: Upload Another File -->
-            <a href="javascript:void(0);" id="btnToppers" class="btn btn-primary me-2">First Three Toppers</a>
-
-            <!-- Button 2: Download Result as Excel -->
-            <a href="javascript:void(0);" id="btnPercent" class="btn btn-success me-2">Percentage wise count</a>
-
-            <!-- Button 3: View Summary -->
-            <a href="javascript:void(0)" id="btnSubjectWiseTopper" class="btn btn-info me-2">Subject wise topers</a>
-        </div>
     </div>
 </div>
 
-<div class="container mt-5" id="resultview"></div>
+<!-- Bootstrap Nav Tabs -->
+<div class="container mt-4">
+    <ul class="nav nav-tabs" id="resultTabs">
+        <li class="nav-item">
+            <a class="nav-link active" id="tabToppers" data-url="@Url.Action("GetFirstThreeToppers", "FileUpload")" href="#">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="tabPercent" data-url="@Url.Action("GetPercent", "FileUpload")" href="#">Percentage wise count</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="tabSubjectWiseTopper" data-url="@Url.Action("GetSubjectWiseTopper", "FileUpload")" href="#">Subject wise toppers</a>
+        </li>
+    </ul>
+</div>
 
+<!-- Result View -->
+<div class="container mt-4">
+    <div id="resultview" class="p-3 border"></div>
+</div>
+
+<!-- jQuery & Bootstrap -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
+        // Function to load data when a tab is clicked
+        function loadTabData(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    $("#resultview").html(data);
+                },
+                error: function () {
+                    $("#resultview").html('<p class="text-danger">Error loading data.</p>');
+                }
+            });
+        }
 
-        $("#btnToppers").click(function () {
-            $.ajax({
-                url: '@Url.Action("GetFirstThreeToppers", "FileUpload")',
-                type: 'GET',
-                success: function (data) {
-                    $("#resultview").html(data);
-                },
-                error: function () {
-                    $("#resultview").html('<p class="text-danger">Error loading data.</p>');
-                }
-            });
-        });
-        
-        $("#btnPercent").click(function () {
-            $.ajax({
-                url: '@Html.Raw(Url.Action("GetPercent", "FileUpload"))',
-                type: 'GET',
-                success: function (data) {
-                    $("#resultview").html(data);
-                },
-                error: function () {
-                    $("#resultview").html('<p class="text-danger">Error loading data.</p>');
-                }
-            });
+        // Handle tab click event
+        $(".nav-link").click(function (e) {
+            e.preventDefault(); // Prevent default link behavior
+
+            $(".nav-link").removeClass("active"); // Remove active class from all tabs
+            $(this).addClass("active"); // Add active class to clicked tab
+
+            var url = $(this).data("url"); // Get URL from data attribute
+            loadTabData(url);
         });
 
-        $("#btnSubjectWiseTopper").click(function () {
-            $.ajax({
-                url: '@Html.Raw(Url.Action("GetSubjectWiseTopper", "FileUpload"))',
-                type: 'GET',
-                success: function (data) {
-                    $("#resultview").html(data);
-                },
-                error: function () {
-                    $("#resultview").html('<p class="text-danger">Error loading data.</p>');
-                }
-            });
-        });
+        // Load the first tab data by default
+        loadTabData($("#tabToppers").data("url"));
     });
 </script>
