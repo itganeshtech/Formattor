@@ -150,10 +150,6 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        //Simulating getting the top 3 students
-        // var toppers = schoolResult.Students.OrderByDescending(x => x.Percentage).Take(3)
-        //.ToList();
-
         var subjectwiseToppers = schoolResult.Students
                                 .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
                                 {
@@ -168,7 +164,6 @@ public class FileUploadController : Controller
                                     .OrderByDescending(s => s.Marks)
                                     .First())
                                 .ToList();
-
 
         return PartialView("_SubjectWiseTopperPartial", subjectwiseToppers);
     }
