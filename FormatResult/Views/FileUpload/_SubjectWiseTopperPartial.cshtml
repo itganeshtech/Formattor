@@ -1,10 +1,13 @@
-﻿@model List<FormatModals.Student>
+﻿@model List<FormatResult.Models.SubjectWiseResultViewModel>
 
 <div class="mt-4">
     <h3>Subject Wise Toppers:</h3>
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>SubjectName</th>
+                <th>Subject (Code)</th>
+                <th>RollNumber</th>
                 <th>Name</th>
                 <th>Marks</th>
             </tr>
@@ -13,20 +16,16 @@
             @foreach (var student in Model)
             {
                 <tr>
+                    <td>@student.SubjectName</td>
+                    <td>@student.SubjectCode</td>
+                    <td>@student.RollNumber</td>
                     <td>@student.Name</td>
-                    <td>@student.Percentage</td>
+                    <td>@student.Marks</td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
-
-
-
-
-
-
-
 
 
 

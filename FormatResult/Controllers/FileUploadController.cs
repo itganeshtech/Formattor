@@ -118,15 +118,6 @@ public class FileUploadController : Controller
         // Simulating getting the top 3 students
         var allToppers = schoolResult.Students.OrderByDescending(x => x.Percentage).ToList();
 
-        //checking dictionary values of subjects
-        foreach (var student in schoolResult.Students)
-        {
-            foreach (var subject in student.Subjects)
-            {
-                Console.WriteLine($"Code: {subject.Key}, Name: {subject.Value.SubjectName}, Marks: {subject.Value.Marks}, Grade: {subject.Value.Grade}");
-            }
-        }
-
         return PartialView("_PercentPartial", allToppers);
     }
 
@@ -164,12 +155,20 @@ public class FileUploadController : Controller
         //.ToList();
 
         var subjectwiseToppers = schoolResult.Students
-    .GroupBy(x => x.Subjects) // Group by Subject Code
-    .Select(group => group
-        .OrderByDescending(x => x.Percentage) // Get the topper in each subject
-        .FirstOrDefault()) // Get the student with the highest percentage
-    .Where(x => x != null) // Exclude any null results
-    .ToList();
+                                .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
+                                {
+                                    Name = student.Name,
+                                    RollNumber = student.RollNumber,
+                                    SubjectCode = subject.Key,
+                                    SubjectName = subject.Value.SubjectName,
+                                    Marks = subject.Value.Marks
+                                })
+                                .GroupBy(s => s.SubjectCode)
+                                .Select(group => group
+                                    .OrderByDescending(s => s.Marks)
+                                    .First())
+                                .ToList();
+
 
         return PartialView("_SubjectWiseTopperPartial", subjectwiseToppers);
     }

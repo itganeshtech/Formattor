@@ -30,7 +30,9 @@
                             <td>@student.OverallResult</td>
                             <td>@student.Percentage.ToString("0.00")%</td>
                             <td>
-                                <button class="btn btn-info btn-sm" data-toggle="collapse" data-target="#details-@student.RollNumber">View Subjects</button>
+                                @* <button class="btn btn-info btn-sm" data-toggle="collapse" data-target="#details-@student.RollNumber">View Subjects</button> *@
+                                <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#details-@student.RollNumber">View Subjects</button>
+
                             </td>
                         </tr>
                         <tr id="details-@student.RollNumber" class="collapse">

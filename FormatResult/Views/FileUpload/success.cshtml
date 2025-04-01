@@ -23,7 +23,6 @@
     </div>
 </div>
 
-
 <div class="container mt-5" id="resultview"></div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -44,31 +43,29 @@
         });
         
         $("#btnPercent").click(function () {
-        $.ajax({
-            url: '@Html.Raw(Url.Action("GetPercent", "FileUpload"))',
-            type: 'GET',
-            success: function (data) {
-                $("#resultview").html(data);
-            },
-            error: function () {
-                $("#resultview").html('<p class="text-danger">Error loading data.</p>');
-            }
+            $.ajax({
+                url: '@Html.Raw(Url.Action("GetPercent", "FileUpload"))',
+                type: 'GET',
+                success: function (data) {
+                    $("#resultview").html(data);
+                },
+                error: function () {
+                    $("#resultview").html('<p class="text-danger">Error loading data.</p>');
+                }
+            });
         });
-    });
 
-     $("#btnSubjectWiseTopper").click(function () {
-        $.ajax({
-            url: '@Html.Raw(Url.Action("TestLinq", "FileUpload"))',
-            type: 'GET',
-            success: function (data) {
-                $("#resultview").html(data);
-            },
-            error: function () {
-                $("#resultview").html('<p class="text-danger">Error loading data.</p>');
-            }
+        $("#btnSubjectWiseTopper").click(function () {
+            $.ajax({
+                url: '@Html.Raw(Url.Action("GetSubjectWiseTopper", "FileUpload"))',
+                type: 'GET',
+                success: function (data) {
+                    $("#resultview").html(data);
+                },
+                error: function () {
+                    $("#resultview").html('<p class="text-danger">Error loading data.</p>');
+                }
+            });
         });
-    });
-
-
     });
 </script>
