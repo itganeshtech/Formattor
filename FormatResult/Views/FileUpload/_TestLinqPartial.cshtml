@@ -1,0 +1,52 @@
+﻿@model List<FormatModals.Student>
+
+@{
+    // Check if top 3 students exist
+    var hasToppers = Model != null && Model.Any();
+}
+
+<div class="mt-4">
+    <h3>Test Linq page</h3>
+    <table class="table table-bordered">
+        <thead class="bg-light">
+            <tr>
+                <th>Subject Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (hasToppers)
+            {
+                @foreach (var student in Model)
+                {
+                    <tr>
+                        <td>@student.RollNumber</td>
+                        <td>
+                            <table class="table table-bordered mt-2">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Subject Code</th>
+                                        <th>Subject Name</th>
+                                        <th>Marks</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var subject in student.Subjects)
+                                    {
+                                        <tr>
+                                            <td>@subject.Key</td>
+                                            <td>@subject.Value.SubjectName</td>
+                                            <td>@subject.Value.Marks</td>
+                                            <td>@subject.Value.Grade</td>
+                                        </tr>
+                                    }@* //inner for ends *@
+                                </tbody>
+                            </table>@* //inner table ends *@
+                        </td>
+                    </tr>
+                    @* //upper table row ends here *@
+                }   @* //outer for ends *@
+            }@* //if ends *@
+        </tbody>@* //upper table body ends *@
+    </table>
+</div>

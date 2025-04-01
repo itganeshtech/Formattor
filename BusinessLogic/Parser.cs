@@ -3,14 +3,8 @@ using FormatModals;
 
 namespace BusinessLogic
 {
-   public class Parser
+    public class Parser
     {
-        private static readonly Dictionary<string, string> SubjectLookup = new()
-        {
-            { "041", "Mathematics" }, { "042", "Physics" }, { "043", "Chemistry" }, { "083", "Computer Science" },
-            { "094", "English" }, { "301", "Core Subject" } // Add more subjects as needed
-        };
-
         public static SchoolResult ParseFile(string filePath)
         {
             string[] lines = File.ReadAllLines(filePath);
@@ -78,9 +72,9 @@ namespace BusinessLogic
             int marksIndex = 66;
             foreach (Match match in matches)
             {
-                if (SubjectLookup.ContainsKey(match.Value))
+                if (SubjectMaster.SubjectLookup.ContainsKey(match.Value))
                 {
-                    student.Subjects[match.Value] = (SubjectLookup[match.Value], int.Parse(nextLine.Substring(marksIndex, 3).Trim()), nextLine.Substring(marksIndex + 4, 3).Trim());
+                    student.Subjects[match.Value] = (SubjectMaster.SubjectLookup[match.Value], int.Parse(nextLine.Substring(marksIndex, 3).Trim()), nextLine.Substring(marksIndex + 4, 3).Trim());
                     marksIndex += 8;
                 }
 

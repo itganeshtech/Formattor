@@ -9,29 +9,37 @@
         <p>File Name: <strong>@Model.FileName</strong></p>
         <p>School Name: <strong>@Model.SchoolResult.SchoolName</strong></p>
         <p>Total Number of Students Enrolled: <strong>@Model.SchoolResult.Students.Count</strong></p>
-
-        <div class="mt-4">
-            <!-- Button 1: Upload Another File -->
-            <a href="javascript:void(0);" id="btnToppers" class="btn btn-primary me-2">First Three Toppers</a>
-
-            <!-- Button 2: Download Result as Excel -->
-            <a href="" class="btn btn-success me-2">Percentage wise count</a>
-
-            <!-- Button 3: View Summary -->
-            <a href="" class="btn btn-info me-2">Subject wise topers</a>            
-        </div>
     </div>
 </div>
 
+<!-- Bootstrap Nav Tabs -->
+<div class="container mt-4">
+    <ul class="nav nav-tabs" id="resultTabs">
+        <li class="nav-item">
+            <a class="nav-link active" id="tabToppers" data-url="@Url.Action("GetFirstThreeToppers", "FileUpload")" href="#">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="tabPercent" data-url="@Url.Action("GetPercent", "FileUpload")" href="#">Percentage wise count</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="tabSubjectWiseTopper" data-url="@Url.Action("GetSubjectWiseTopper", "FileUpload")" href="#">Subject wise toppers</a>
+        </li>
+    </ul>
+</div>
 
-<div class="container mt-5" id="resultview"></div>
+<!-- Result View -->
+<div class="container mt-4">
+    <div id="resultview" class="p-3 border"></div>
+</div>
 
+<!-- jQuery & Bootstrap -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        $("#btnToppers").click(function () {
+        // Function to load data when a tab is clicked
+        function loadTabData(url) {
             $.ajax({
-                url: '@Url.Action("GetFirstThreeToppers", "FileUpload")',
+                url: url,
                 type: 'GET',
                 success: function (data) {
                     $("#resultview").html(data);
@@ -40,6 +48,20 @@
                     $("#resultview").html('<p class="text-danger">Error loading data.</p>');
                 }
             });
+        }
+
+        // Handle tab click event
+        $(".nav-link").click(function (e) {
+            e.preventDefault(); // Prevent default link behavior
+
+            $(".nav-link").removeClass("active"); // Remove active class from all tabs
+            $(this).addClass("active"); // Add active class to clicked tab
+
+            var url = $(this).data("url"); // Get URL from data attribute
+            loadTabData(url);
         });
+
+        // Load the first tab data by default
+        loadTabData($("#tabToppers").data("url"));
     });
 </script>
