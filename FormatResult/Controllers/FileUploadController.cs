@@ -89,8 +89,37 @@ public class FileUploadController : Controller
         return View();
     }
 
+    //OVERALL QUICK SUMMARY
+    public IActionResult GetOverallSummary()
+    {
+        var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
+        var schoolResult = schoolResultJson != null
+            ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
+            : new SchoolResult();
+
+        var maxPercentage = schoolResult.Students.Max(s => s.Percentage);
+
+        var viewModel = new OverallSummaryViewModel
+        {
+            SchoolResult = schoolResult,
+            Toppers = schoolResult.Students
+                .Where(s => s.Percentage == maxPercentage)
+                .ToList(),
+            CountAbove95 = schoolResult.Students.Count(s => s.Percentage > 95),
+            CountAbove90 = schoolResult.Students.Count(s => s.Percentage > 90),
+            CountPass = schoolResult.Students.Count(s => s.OverallResult.Equals("Pass", StringComparison.OrdinalIgnoreCase)),
+            CountFail = schoolResult.Students.Count(s => s.OverallResult.Equals("Fail", StringComparison.OrdinalIgnoreCase)),
+            CountCompartment = schoolResult.Students.Count(s => s.OverallResult.Equals("Compartment", StringComparison.OrdinalIgnoreCase)),
+            MaxPercentage = maxPercentage
+        };
+
+        return PartialView("_OverallSummaryPartial", viewModel);
+    }
+
+    //TO DISPLAY FIRST THREE TOPPERS
     public IActionResult GetFirstThreeToppers()
     {
+        // FIRST MAX PERCENT SECOND MAX PERCENT THIRD PERCENT
         // Deserialize the JSON string back to SchoolResult object
         var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
 
@@ -105,7 +134,7 @@ public class FileUploadController : Controller
         return PartialView("_ToppersPartial", toppers);
     }
 
-    //To calculate the percentage of the students
+    //TO DISPLAY PERCENTAGE OF ALL THE STUDENTS
     public IActionResult GetPercent()
     {
         // Deserialize the JSON string back to SchoolResult object
@@ -121,26 +150,7 @@ public class FileUploadController : Controller
         return PartialView("_PercentPartial", allToppers);
     }
 
-    //Test LINQ query
-    public IActionResult TestLinq()
-    {
-        // Deserialize the JSON string back to SchoolResult object
-        var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
-
-        var schoolResult = schoolResultJson != null
-            ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
-            : new SchoolResult(); // Fallback if nothing is passed
-
-        // Simulating getting the top 3 students
-        var toppers = schoolResult.Students
-                      .Where(s => s.Percentage > 95).ToList();
-
-
-        //Console.WriteLine("Test Completed");
-        return PartialView("_TestLinqPartial", toppers);
-    }
-
-    //To calculate subject wise topper
+    //TO DISPLAY FULL DETAILS OF SUBJECT WISE TOPPERS
     public IActionResult GetSubjectWiseTopper()
     {
         //Deserialize the JSON string back to SchoolResult object
@@ -168,7 +178,57 @@ public class FileUploadController : Controller
         return PartialView("_SubjectWiseTopperPartial", subjectwiseToppers);
     }
 
+    // COUNT OF TOTAL 100 AND  SUBJECT WISE 100 MARKS WITH STUDENT DETAILS
+    public IActionResult GetFullMarks()
+    {
+        // Deserialize the JSON string back to SchoolResult object
+        var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
 
+        var schoolResult = schoolResultJson != null
+            ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
+            : new SchoolResult(); // Fallback if nothing is passed
+
+        // Simulating getting the top 3 students
+        var toppers = schoolResult.Students
+                      .Where(s => s.Percentage > 95).ToList();
+        return PartialView("_FullMarksPartial", toppers);
+    }
+
+    // GET SUBJECT WISE FULL DETAIL OF STUDENTS LIKE SUBJECT TOPPER AND STUDENTS IN 90S AND 80S AND 70S
+    public IActionResult GetSubjectWiseDetails()
+    {
+        // Deserialize the JSON string back to SchoolResult object
+        var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
+
+        var schoolResult = schoolResultJson != null
+            ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
+            : new SchoolResult(); // Fallback if nothing is passed
+
+        // Simulating getting the top 3 students
+        var toppers = schoolResult.Students
+                      .Where(s => s.Percentage > 95).ToList();
+        return PartialView("_SubjectWiseDetailsPartial", toppers);
+    }
+
+    //Test LINQ query
+    public IActionResult TestLinq()
+    {
+        // Deserialize the JSON string back to SchoolResult object
+        var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
+
+        var schoolResult = schoolResultJson != null
+            ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
+            : new SchoolResult(); // Fallback if nothing is passed
+
+        // Simulating getting the top 3 students
+        var toppers = schoolResult.Students
+                      .Where(s => s.Percentage > 95).ToList();
+
+
+        //Console.WriteLine("Test Completed");
+        return PartialView("_TestLinqPartial", toppers);
+    }
+      
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
