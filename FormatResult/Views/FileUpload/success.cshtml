@@ -3,35 +3,35 @@
     ViewData["Title"] = "Upload Successful";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-lg p-4">
-        <h2 class="text-success"> Uploaded Successfully!</h2>
-        <p>File Name: <strong>@Model.FileName</strong></p>
-        <p>School Name: <strong>@Model.SchoolResult.SchoolName</strong></p>
-        <p>Total Number of Students Enrolled: <strong>@Model.SchoolResult.Students.Count</strong></p>
+<div class="container mt-1">
+    <div class="card shadow-lg p-1">
+        <h7> <b>Scroll Down The Page To See Full Content!</b></h7>
+        <p >File Name: <strong>@Model.FileName</strong></p>
+        <p >School Name: <strong>@Model.SchoolResult.SchoolName</strong></p>
+        <p >Total Number of Students Enrolled: <strong>@Model.SchoolResult.Students.Count</strong></p>
     </div>
 </div>
 
 <!-- Bootstrap Nav Tabs -->
-<div class="container mt-4">
+<div class="container mt-1">
     <ul class="nav nav-tabs" id="resultTabs">
         <li class="nav-item">
             <a class="nav-link active" id="tabOverall" data-url="@Url.Action("GetOverallSummary", "FileUpload")" href="#">Overview</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" id="tabToppers" data-url="@Url.Action("GetFirstThreeToppers", "FileUpload")" href="#">First Three Toppers</a>
+            <a class="nav-link active" id="tabToppers" data-url="@Url.Action("GetFirstThreeToppers", "FileUpload")" href="#">FirstThreeToppers</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="tabPercent" data-url="@Url.Action("GetPercent", "FileUpload")" href="#">All Students Percentage</a>
+            <a class="nav-link" id="tabPercent" data-url="@Url.Action("GetPercent", "FileUpload")" href="#">PercentageOfAllStudents</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="tabSubjectWiseTopper" data-url="@Url.Action("GetSubjectWiseTopper", "FileUpload")" href="#">Subject Wise toppers</a>
+            <a class="nav-link" id="tabSubjectWiseTopper" data-url="@Url.Action("GetSubjectWiseTopper", "FileUpload")" href="#">SubjectWisetoppers</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="tabFullMarks" data-url="@Url.Action("GetFullMarks", "FileUpload")" href="#">Full Marks </a>
+            <a class="nav-link" id="tabFullMarks" data-url="@Url.Action("GetFullMarks", "FileUpload")" href="#">100Marks </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="tabSubjectWiseDetails" data-url="@Url.Action("GetSubjectWiseDetails", "FileUpload")" href="#">Subject Wise Details</a>
+            <a class="nav-link" id="tabSubjectWiseDetails" data-url="@Url.Action("GetSubjectWiseDetails", "FileUpload")" href="#">SubjectWiseDetails</a>
         </li>
 
     </ul>

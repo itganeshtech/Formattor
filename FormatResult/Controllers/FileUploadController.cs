@@ -119,7 +119,7 @@ public class FileUploadController : Controller
     //TO DISPLAY FIRST THREE TOPPERS
     public IActionResult GetFirstThreeToppers()
     {
-        // FIRST MAX PERCENT SECOND MAX PERCENT THIRD PERCENT
+        
         // Deserialize the JSON string back to SchoolResult object
         var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
 
@@ -127,9 +127,21 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        // Simulating getting the top 3 students
-        var toppers = schoolResult.Students.OrderByDescending(x => x.Percentage).Take(3)
-            .ToList();
+        // Simulating getting the top  students
+        var toppers = schoolResult.Students
+                                .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
+                                {
+                                    Name = student.Name,
+                                    RollNumber = student.RollNumber,
+                                    SubjectCode = subject.Key,
+                                    SubjectName = subject.Value.SubjectName,
+                                    Marks = subject.Value.Marks
+                                })
+                                .GroupBy(s => s.SubjectCode)
+                                .Select(group => group
+                                    .OrderByDescending(s => s.Marks)
+                                    .First())
+                                .ToList();
 
         return PartialView("_ToppersPartial", toppers);
     }
