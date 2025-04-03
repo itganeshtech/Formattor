@@ -117,7 +117,7 @@ public class FileUploadController : Controller
     }
 
     //TO DISPLAY FIRST THREE TOPPERS
-    public IActionResult GetFirstThreeToppers()
+    public IActionResult GetFirstToppers()
     {
         
         // Deserialize the JSON string back to SchoolResult object
@@ -128,22 +128,32 @@ public class FileUploadController : Controller
             : new SchoolResult(); // Fallback if nothing is passed
 
         // Simulating getting the top  students
-        var toppers = schoolResult.Students
-                                .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
-                                {
-                                    Name = student.Name,
-                                    RollNumber = student.RollNumber,
-                                    SubjectCode = subject.Key,
-                                    SubjectName = subject.Value.SubjectName,
-                                    Marks = subject.Value.Marks
-                                })
-                                .GroupBy(s => s.SubjectCode)
-                                .Select(group => group
-                                    .OrderByDescending(s => s.Marks)
-                                    .First())
-                                .ToList();
+        // Get distinct percentages and find top 3
+        var topPercentages = schoolResult.Students
+            .Select(s => s.Percentage)
+            .Distinct()
+            .OrderByDescending(p => p)
+            .Take(3)
+            .ToList();
 
-        return PartialView("_ToppersPartial", toppers);
+        // Group  top performing students on the basis of percentage
+        var result = schoolResult.Students
+            .Where(s => topPercentages.Contains(s.Percentage))
+            .GroupBy(s => s.Percentage)
+            .OrderByDescending(g => g.Key)
+            .SelectMany(g => g
+                .OrderByDescending(s => s.Percentage)
+                .ThenBy(s => s.Name)
+                .Select(s => new FirstToppersViewModel
+                {
+                    Name = s.Name,
+                    RollNumber = s.RollNumber,
+                   // Percentage = s.Percentage,
+                    SubjectCode = "OVERALL",
+                    SubjectName = "Overall Result"
+                }))
+            .ToList();
+        return PartialView("_FirstToppersPartial", result);
     }
 
     //TO DISPLAY PERCENTAGE OF ALL THE STUDENTS
@@ -156,7 +166,7 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        // Simulating getting the top 3 students
+        // Calculating percentage of all students
         var allToppers = schoolResult.Students.OrderByDescending(x => x.Percentage).ToList();
 
         return PartialView("_PercentPartial", allToppers);
@@ -201,9 +211,29 @@ public class FileUploadController : Controller
             : new SchoolResult(); // Fallback if nothing is passed
 
         // Simulating getting the top 3 students
-        var toppers = schoolResult.Students
-                      .Where(s => s.Percentage > 95).ToList();
-        return PartialView("_FullMarksPartial", toppers);
+        var subjectWiseCenturions = schoolResult.Students
+       .SelectMany(student => student.Subjects, (student, subject) => new
+       {
+           Student = student,
+           SubjectCode = subject.Key,
+           SubjectName = subject.Value.SubjectName,
+           Marks = subject.Value.Marks
+       })
+       .Where(s => s.Marks == 100)
+       .GroupBy(s => new { s.SubjectCode, s.SubjectName })
+       .OrderBy(g => g.Key.SubjectName)
+       .SelectMany(g => g
+           .OrderBy(s => s.Student.Name)
+           .Select(s => new FullMarksViewModel
+           {
+               Name = s.Student.Name,
+               RollNumber = s.Student.RollNumber,
+               SubjectCode = g.Key.SubjectCode,
+               SubjectName = g.Key.SubjectName,
+               Marks = s.Marks
+           }))
+       .ToList();
+        return PartialView("_FullMarksPartial", subjectWiseCenturions);
     }
 
     // GET SUBJECT WISE FULL DETAIL OF STUDENTS LIKE SUBJECT TOPPER AND STUDENTS IN 90S AND 80S AND 70S

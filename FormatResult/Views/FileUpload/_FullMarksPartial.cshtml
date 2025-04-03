@@ -1,4 +1,4 @@
-﻿@model List<FormatModals.Student>
+﻿@model List<FormatResult.Models.FullMarksViewModel>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 @if (Model != null && Model.Any())
@@ -26,9 +26,9 @@
                         <tr>
                             <td>@student.RollNumber</td>
                             <td>@student.Name</td>
-                            <td>@student.Gender</td>
+                            @* <td>@student.Gender</td>
                             <td>@student.OverallResult</td>
-                            <td>@student.Percentage.ToString("0.00")%</td>
+                            <td>@student.Percentage.ToString("0.00")%</td> *@
                             <td>
                                 @* <button class="btn btn-info btn-sm" data-toggle="collapse" data-target="#details-@student.RollNumber">View Subjects</button> *@
                                 <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#details-@student.RollNumber">View Subjects</button>
@@ -37,7 +37,7 @@
                         </tr>
                         <tr id="details-@student.RollNumber" class="collapse">
                             <td colspan="6">
-                                @if (student.Subjects != null && student.Subjects.Any())
+                               @*  @if ( ) *@
                                 {
                                     <table class="table table-bordered mt-2">
                                         <thead class="bg-light">
@@ -49,13 +49,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach (var subject in student.Subjects)
+                                            @* @foreach () *@
                                             {
                                                 <tr>
-                                                    <td>@subject.Key</td>
+                                                    @* <td>@subject.Key</td>
                                                     <td>@subject.Value.SubjectName</td>
                                                     <td>@subject.Value.Marks</td>
-                                                    <td>@subject.Value.Grade</td>
+                                                    <td>@subject.Value.Grade</td> *@
                                                 </tr>
                                             }
                                         </tbody>

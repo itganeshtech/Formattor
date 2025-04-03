@@ -1,6 +1,6 @@
 ﻿namespace FormatResult.Models
 {
-    public class SubjectWiseResultViewModel
+    public class FirstToppersViewModel
     {
         public string SubjectName { get; set; }
         public string SubjectCode { get; set; }
