@@ -116,7 +116,7 @@ public class FileUploadController : Controller
         return PartialView("_OverallSummaryPartial", viewModel);
     }
 
-    //TO DISPLAY FIRST THREE TOPPERS
+    //TO DISPLAY First Toppers
     public IActionResult GetFirstToppers()
     {
 
@@ -150,7 +150,7 @@ public class FileUploadController : Controller
                     RollNumber = s.RollNumber,
                     Percentage = s.Percentage,
                     Student = s,
-                    SubjectCode = "OVERALL",
+                    SubjectCode = "",   //s.Subjects.ToLookup<>"",
                     SubjectName = "Overall Result"
                 }))
             .ToList();
@@ -211,7 +211,7 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        // Simulating getting the top 3 students
+        // Display students who scored 100 in any subject
         var subjectWiseCenturions = schoolResult.Students
         .SelectMany(student => student.Subjects
             .Where(subject => subject.Value.Marks == 100)
@@ -221,7 +221,11 @@ public class FileUploadController : Controller
                 SubjectName = subject.Value.SubjectName,
                 RollNumber = student.RollNumber,
                 Name = student.Name,
-                Marks = subject.Value.Marks
+                Marks = subject.Value.Marks,
+                Percentage = student.Percentage,
+                Gender= student.Gender,
+                OverallResult = student.OverallResult,
+                Subjects = student.Subjects
             }))
         .ToList();
 
