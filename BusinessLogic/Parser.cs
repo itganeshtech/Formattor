@@ -69,7 +69,7 @@ namespace BusinessLogic
             // Find matches in the input string
             var matches = Regex.Matches(subjectData, pattern);
 
-            int marksIndex = 66;
+            int marksIndex = 65;
             foreach (Match match in matches)
             {
                 if (SubjectMaster.SubjectLookup.ContainsKey(match.Value))

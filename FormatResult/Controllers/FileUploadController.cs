@@ -119,7 +119,7 @@ public class FileUploadController : Controller
     //TO DISPLAY FIRST THREE TOPPERS
     public IActionResult GetFirstToppers()
     {
-        
+
         // Deserialize the JSON string back to SchoolResult object
         var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
 
@@ -148,7 +148,8 @@ public class FileUploadController : Controller
                 {
                     Name = s.Name,
                     RollNumber = s.RollNumber,
-                   // Percentage = s.Percentage,
+                    Percentage = s.Percentage,
+                    Student = s,
                     SubjectCode = "OVERALL",
                     SubjectName = "Overall Result"
                 }))
@@ -212,27 +213,18 @@ public class FileUploadController : Controller
 
         // Simulating getting the top 3 students
         var subjectWiseCenturions = schoolResult.Students
-       .SelectMany(student => student.Subjects, (student, subject) => new
-       {
-           Student = student,
-           SubjectCode = subject.Key,
-           SubjectName = subject.Value.SubjectName,
-           Marks = subject.Value.Marks
-       })
-       .Where(s => s.Marks == 100)
-       .GroupBy(s => new { s.SubjectCode, s.SubjectName })
-       .OrderBy(g => g.Key.SubjectName)
-       .SelectMany(g => g
-           .OrderBy(s => s.Student.Name)
-           .Select(s => new FullMarksViewModel
-           {
-               Name = s.Student.Name,
-               RollNumber = s.Student.RollNumber,
-               SubjectCode = g.Key.SubjectCode,
-               SubjectName = g.Key.SubjectName,
-               Marks = s.Marks
-           }))
-       .ToList();
+        .SelectMany(student => student.Subjects
+            .Where(subject => subject.Value.Marks == 100)
+            .Select(subject => new FullMarksViewModel
+            {
+                SubjectCode = subject.Key,
+                SubjectName = subject.Value.SubjectName,
+                RollNumber = student.RollNumber,
+                Name = student.Name,
+                Marks = subject.Value.Marks
+            }))
+        .ToList();
+
         return PartialView("_FullMarksPartial", subjectWiseCenturions);
     }
 
@@ -270,7 +262,7 @@ public class FileUploadController : Controller
         //Console.WriteLine("Test Completed");
         return PartialView("_TestLinqPartial", toppers);
     }
-      
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

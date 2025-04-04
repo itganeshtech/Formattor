@@ -1,4 +1,6 @@
-﻿namespace FormatResult.Models
+﻿using FormatModals;
+
+namespace FormatResult.Models
 {
     public class FirstToppersViewModel
     {
@@ -6,7 +8,7 @@
         public string SubjectCode { get; set; }
         public string RollNumber { get; set; }
         public string Name { get; set; }
-        public double Marks { get; set; }
-
+        public double Percentage { get; set; }
+        public Student Student { get; set; }
     }
 }
