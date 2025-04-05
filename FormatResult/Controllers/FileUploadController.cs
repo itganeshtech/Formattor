@@ -183,6 +183,7 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
+        /*
         var subjectwiseToppers = schoolResult.Students
                                 .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
                                 {
@@ -195,8 +196,33 @@ public class FileUploadController : Controller
                                 .GroupBy(s => s.SubjectCode)
                                 .Select(group => group
                                     .OrderByDescending(s => s.Marks)
-                                    .First())
-                                .ToList();
+                                    .Take(3))
+                                .ToList();*/
+
+        var subjectwiseToppers = schoolResult.Students
+            .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
+            {
+                Name = student.Name,
+                RollNumber = student.RollNumber,
+                SubjectCode = subject.Key,
+                SubjectName = subject.Value.SubjectName,
+                Marks = subject.Value.Marks
+            })
+            .GroupBy(s => s.SubjectCode)
+            .SelectMany(group =>
+            {
+                // Get the top 3 distinct marks for the subject
+                var topMarks = group
+                    .OrderByDescending(s => s.Marks)
+                    .Select(s => s.Marks)
+                    .Distinct()
+                    .Take(3)
+                    .ToHashSet(); // Using HashSet for fast lookup
+
+                // Return all students who have those marks
+                return group.Where(s => topMarks.Contains(s.Marks));
+            })
+            .ToList();
 
         return PartialView("_SubjectWiseTopperPartial", subjectwiseToppers);
     }
