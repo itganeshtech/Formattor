@@ -19,10 +19,12 @@
             <a class="nav-link active" id="tabOverall" data-url="@Url.Action("GetOverallSummary", "FileUpload")" href="#">Overview</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="tabToppers" data-url="@Url.Action("GetFirstToppers", "FileUpload")" href="#">TopPerformers</a>
+            <a class="nav-link" id="tabToppers" data-url="@Url.Action("GetTopPerformersPercentWise", "FileUpload")" href="#">TopPerformers</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="tabPercent" data-url="@Url.Action("GetPercent", "FileUpload")" href="#">PercentageOfAllStudents</a>
+@*             <a class="nav-link" id="tabPercent" data-url="@Url.Action("GetPercent", "FileUpload")" href="#">PercentageOfAllStudents</a>
+ *@            <a class="nav-link" id="tabPercent" data-url="@Url.Action("GetAllStudentsPercent", "FileUpload")" href="#">PercentageOfAllStudents</a>
+
         </li>
         <li class="nav-item">
             <a class="nav-link" id="tabSubjectWiseTopper" data-url="@Url.Action("GetSubjectWiseTopper", "FileUpload")" href="#">SubjectWisetoppers</a>
@@ -31,7 +33,7 @@
             <a class="nav-link" id="tabFullMarks" data-url="@Url.Action("GetFullMarks", "FileUpload")" href="#">100Marks </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="tabSubjectWiseDetails" data-url="@Url.Action("GetSubjectWiseDetails", "FileUpload")" href="#">SubjectWiseDetails</a>
+            <a class="nav-link" id="tabSubjectWiseDetails" data-url="@Url.Action("GetSubjectFullDetails", "FileUpload")" href="#">SubjectWiseDetails</a>
         </li>
 
     </ul>

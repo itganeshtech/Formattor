@@ -9,14 +9,15 @@
     <div class="card-body">
         <div class="row mb-4">
             <div class="col-md-6">
-                <h5 class="text-primary">🏫 Top 3 Students</h5>
+                <h5 class="text-primary">🏫 List Of Students Under Top Three Percent</h5>
                 <p><strong>Total Students Listed:</strong> @Model.Count</p>
             </div>
             <div class="col-md-6">
                 <div class="alert alert-secondary">
-                    <h5 class="mb-2">📊 Performance Summary</h5>
-                    <p class="mb-1"><strong>Highest Percentage:</strong> </p>
-                    <p class="mb-1"><strong>Average Percentage:</strong> </p>
+                    <h5 class="mb-2">📊 Top Three Percentage</h5>
+                    <p class="mb-1"><strong>First Highest:</strong> </p>
+                    <p class="mb-1"><strong>Second Highest:</strong> </p>
+                    <p class="mb-1"><strong>Third Highest:</strong> </p>
                 </div>
             </div>
         </div>
@@ -47,7 +48,7 @@
                                 <td>@student.RollNumber</td>
                                 <td>@student.Name</td>
                                 <td></td>
-                                <td>@student.Percentage</td>
+                                <td>@student.Percentage.ToString("0.00")%</td>
                                 <td></td>
                             </tr>
                             counter++;

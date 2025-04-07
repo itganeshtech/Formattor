@@ -1,0 +1,357 @@
+﻿@model FormatResult.Models.SubjectFullDetailsViewModel
+
+<div class="container mt-4">
+    <h2 class="mb-3">Subject Summary:</h2>
+
+    <hr />
+
+    <h4>Performance Distribution</h4>
+    <div class="row">
+        <div class="col-md-3"><strong>Full Marks (100%)</strong>: @Model.FullMarks.Count</div>
+        <div class="col-md-3"><strong>Above 95</strong>: @Model.Above95.Count</div>
+        <div class="col-md-3"><strong>Above 90</strong>: @Model.Above90.Count</div>
+        <div class="col-md-3"><strong>80 - 90</strong>: @Model.Between80n90.Count</div>
+        <div class="col-md-3"><strong>70 - 80</strong>: @Model.Between70n80.Count</div>
+        <div class="col-md-3"><strong>60 - 70</strong>: @Model.Between60n70.Count</div>
+        <div class="col-md-3"><strong>50 - 60</strong>: @Model.Between50n60.Count</div>
+        <div class="col-md-3"><strong>33 - 50</strong>: @Model.Between33n50.Count</div>
+    </div>
+
+    <hr />
+
+    <h4>Overall Result</h4>
+    <ul>
+        <li><strong>Passed</strong>: @Model.Pass.Count</li>
+        <li><strong>Failed</strong>: @Model.Fail.Count</li>
+        <li><strong>Compartment</strong>: @Model.Compartment.Count</li>
+    </ul>
+
+    <hr />
+
+    <h4>Subject-wise Toppers</h4>
+    @if (Model.SubjectWiseToppers != null)
+    {
+        foreach (var subject in Model.SubjectWiseToppers)
+        {
+            <h5 class="mt-3">@subject.SubjectName (@subject.SubjectCode)</h5>
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Roll Number</th>
+                        <th>Name</th>
+                        <th>Marks</th>
+                        <th>Grade</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var student in subject.TopStudents)
+                    {
+                        <tr>
+                            <td>@student.RollNumber</td>
+                            <td>@student.Name</td>
+                            <td>@student.Marks</td>
+                            <td>@student.Grade</td>
+                            <td>@student.Percentage%</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+    else
+    {
+        <p>No topper data available.</p>
+    }
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @model FormatResult.Models.SubjectFullDetailsViewModel
+
+@{
+    // Extract all unique subjects from the SubjectWiseToppers data
+    var subjects = Model.SubjectWiseToppers
+        .SelectMany(x => x.TopStudents)
+        .GroupBy(s => new { s.SubjectCode, s.SubjectName })
+        .Select(g => g.First())
+        .ToList();
+}
+
+<div class="subject-reports-container">
+    @foreach (var subject in subjects)
+    {
+        <div class="subject-report">
+            <h2>@subject.SubjectName (@subject.SubjectCode)</h2>
+
+            <!-- 100 Scorers -->
+            <div class="marks-category">
+                <h3>100 Scorers:</h3>
+                @{
+                    var fullMarks = Model.SubjectWiseToppers
+                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
+                        .TopStudents
+                        .Where(s => s.Marks == 100)
+                        .ToList();
+                }
+                @if (fullMarks?.Any() == true)
+                {
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Roll Number</th>
+                                <th>Name</th>
+                                <th>Marks</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var student in fullMarks)
+                            {
+                                <tr>
+                                    <td>@student.RollNumber</td>
+                                    <td>@student.Name</td>
+                                    <td>@student.Marks</td>
+                                    <td>@student.Percentage.ToString("0.00")%</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No students scored 100 marks in this subject.</p>
+                }
+            </div>
+
+            <!-- Above 95 -->
+            <div class="marks-category">
+                <h3>Above 95:</h3>
+                @{
+                    var above95 = Model.SubjectWiseToppers
+                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
+                        .TopStudents
+                        .Where(s => s.Marks > 95 && s.Marks < 100)
+                        .ToList();
+                }
+                @if (above95?.Any() == true)
+                {
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Roll Number</th>
+                                <th>Name</th>
+                                <th>Marks</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var student in above95)
+                            {
+                                <tr>
+                                    <td>@student.RollNumber</td>
+                                    <td>@student.Name</td>
+                                    <td>@student.Marks</td>
+                                    <td>@student.Percentage.ToString("0.00")%</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No students scored above 95 marks in this subject.</p>
+                }
+            </div>
+
+            <!-- >90 and <95 -->
+            <div class="marks-category">
+                <h3>>90 and <95:</h3>
+                @{
+                    var above90Below95 = Model.SubjectWiseToppers
+                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
+                        .TopStudents
+                        .Where(s => s.Marks > 90 && s.Marks <= 95)
+                        .ToList();
+                }
+                @if (above90Below95?.Any() == true)
+                {
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Roll Number</th>
+                                <th>Name</th>
+                                <th>Marks</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var student in above90Below95)
+                            {
+                                <tr>
+                                    <td>@student.RollNumber</td>
+                                    <td>@student.Name</td>
+                                    <td>@student.Marks</td>
+                                    <td>@student.Percentage.ToString("0.00")%</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No students scored between 90 and 95 marks in this subject.</p>
+                }
+            </div>
+
+            <!-- Continue with other categories following the same pattern -->
+            <!-- >80 and <=90 -->
+            <div class="marks-category">
+                <h3>>80 and <=90:</h3>
+                @{
+                    var above80Below90 = Model.SubjectWiseToppers
+                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
+                        .TopStudents
+                        .Where(s => s.Marks > 80 && s.Marks <= 90)
+                        .ToList();
+                }
+                @if (above80Below90?.Any() == true)
+                {
+                    <table class="student-table">
+                        <!-- Table structure same as above -->
+                    </table>
+                }
+                else
+                {
+                    <p>No students scored between 80 and 90 marks in this subject.</p>
+                }
+            </div>
+
+            <!-- >70 and <=80 -->
+            <div class="marks-category">
+                <h3>>70 and <=80:</h3>
+                <!-- Similar implementation -->
+            </div>
+
+            <!-- >60 and <=70 -->
+            <div class="marks-category">
+                <h3>>60 and <=70:</h3>
+                <!-- Similar implementation -->
+            </div>
+
+            <!-- >50 and <=60 -->
+            <div class="marks-category">
+                <h3>>50 and <=60:</h3>
+                <!-- Similar implementation -->
+            </div>
+
+            <!-- >=33 and <=50 -->
+            <div class="marks-category">
+                <h3>>=33 and <=50:</h3>
+                <!-- Similar implementation -->
+            </div>
+
+            <!-- Pass Students -->
+            <div class="result-category">
+                <h3>Pass Students:</h3>
+                @{
+                    var passStudents = Model.SubjectWiseToppers
+                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
+                        .TopStudents
+                        .Where(s => s.OverallResult.Equals("Pass", StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                }
+                <!-- Table implementation -->
+            </div>
+
+            <!-- Fail Students -->
+            <div class="result-category">
+                <h3>Fail Students:</h3>
+                <!-- Similar implementation for fail students -->
+            </div>
+
+            <!-- Compartment Students -->
+            <div class="result-category">
+                <h3>Compartment Students:</h3>
+                <!-- Similar implementation for compartment students -->
+            </div>
+
+            <hr class="subject-divider" />
+        </div>
+    }
+</div>
+
+<style>
+    .subject-reports-container {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+
+    .subject-report {
+        margin-bottom: 40px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .subject-report h2 {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+    }
+
+    .marks-category, .result-category {
+        margin: 15px 0;
+    }
+
+    .marks-category h3, .result-category h3 {
+        color: #2980b9;
+        margin-bottom: 10px;
+    }
+
+    .student-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+
+    .student-table th {
+        background-color: #3498db;
+        color: white;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .student-table td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .student-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .subject-divider {
+        border: 0;
+        height: 1px;
+        background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+        margin: 30px 0;
+    }
+</style> *@

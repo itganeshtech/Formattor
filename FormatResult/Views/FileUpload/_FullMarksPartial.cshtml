@@ -14,10 +14,11 @@
                     <tr>
                         <th>Roll Number</th>
                         <th>Name</th>
-                        <th>Gender</th>
-                        <th>Overall Result</th>
-                        <th>Percentage</th>
-                        <th>Action</th>
+                        <th>Sub1</th>
+                        <th>Sub2</th>
+                        <th>Sub3</th>
+                        <th>Sub4</th>
+                        <th>Sub5</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,9 +27,12 @@
                         <tr>
                             <td>@student.RollNumber</td>
                             <td>@student.Name</td>
-                            <td>@student.Gender</td>
-                            <td>@student.OverallResult</td>
-                            <td>@student.Percentage.ToString("0.00")%</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+
                             <td>
                                 @* <button class="btn btn-info btn-sm" data-toggle="collapse" data-target="#details-@student.RollNumber">View Subjects</button> *@
                                 <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#details-@student.RollNumber">View Subjects</button>
@@ -117,7 +121,7 @@ else
             {
                 <tr>
                     <td>@student.Name</td>
-                    <td>@student.Percentage</td>
+                    <td>@student.Percentage.ToString("0.00")%</td>
                 </tr>
             }
         </tbody>
