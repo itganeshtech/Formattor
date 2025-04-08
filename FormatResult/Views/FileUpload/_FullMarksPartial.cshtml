@@ -20,16 +20,12 @@
                 <tbody>
                     @foreach (var studentName in Model)
                     {
-                        <tr><td colspan="4">@string.Format($"{studentName.FirstOrDefault(x => x.RollNumber == studentName.Key).Name} ({studentName.Key})")</td></tr>
+                        <tr class="table-info"><td colspan="4"><strong>@string.Format($"{studentName.FirstOrDefault(x => x.RollNumber == studentName.Key).Name} ({studentName.Key})")</strong></td></tr>
                         @foreach (var student in studentName)
                         {
                             <tr>
                                 <td>@string.Format($"{student.SubjectName}({student.SubjectCode})")</td>
-                                <td>@student.Marks</td>
-
-                                <td>
-                                    <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#details-@student.RollNumber">View Subjects</button>
-                                </td>
+                                <td>@student.Marks</td>                               
                             </tr>
                         }
                     }
