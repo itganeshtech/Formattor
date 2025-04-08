@@ -1,4 +1,4 @@
-﻿@model List<FormatModals.Student>
+﻿@model List<FormatResult.Models.FullMarksViewModel>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 @if (Model != null && Model.Any())
@@ -8,16 +8,17 @@
             <h4>Students Details</h4>
         </div>
         <div class="card-body">
-            <h5 class="mb-3">📚 All Students Information</h5>
+            <h5 class="mb-3">📚 Students Securing 100 Marks</h5>
             <table class="table table-bordered table-striped">
-                <thead class="bg-secondary text-white">
+                <thead class="table-dark">
                     <tr>
                         <th>Roll Number</th>
                         <th>Name</th>
-                        <th>Gender</th>
-                        <th>Overall Result</th>
-                        <th>Percentage</th>
-                        <th>Action</th>
+                        <th>Sub1</th>
+                        <th>Sub2</th>
+                        <th>Sub3</th>
+                        <th>Sub4</th>
+                        <th>Sub5</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,9 +27,12 @@
                         <tr>
                             <td>@student.RollNumber</td>
                             <td>@student.Name</td>
-                            <td>@student.Gender</td>
-                            <td>@student.OverallResult</td>
-                            <td>@student.Percentage.ToString("0.00")%</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+
                             <td>
                                 @* <button class="btn btn-info btn-sm" data-toggle="collapse" data-target="#details-@student.RollNumber">View Subjects</button> *@
                                 <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#details-@student.RollNumber">View Subjects</button>
@@ -117,7 +121,7 @@ else
             {
                 <tr>
                     <td>@student.Name</td>
-                    <td>@student.Percentage</td>
+                    <td>@student.Percentage.ToString("0.00")%</td>
                 </tr>
             }
         </tbody>

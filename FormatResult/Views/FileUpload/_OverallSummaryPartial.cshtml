@@ -1,0 +1,101 @@
+﻿@model FormatResult.Models.OverallSummaryViewModel
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+<div class="card shadow-lg p-1 mb-3 bg-white rounded">
+    <div class="card-header bg-primary text-white">
+        <h4>School Performance Summary</h4>
+    </div>
+    <div class="card-body">
+        <div class="row mb-1">
+            <div class="col-md-6">
+                <h5 class="text-primary">🏫 @Model.SchoolResult.SchoolName</h5>
+                <p><strong>Board:</strong> @Model.SchoolResult.BoardName</p>
+                <p><strong>Result Date:</strong> @Model.SchoolResult.Date</p>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-secondary">
+                    <h5 class="mb-2">📊 Quick Stats</h5>
+                    <p class="mb-1"><strong>Total Students:</strong> @Model.SchoolResult.Students.Count</p>
+                    <p class="mb-1"><strong>Highest Percentage:</strong> @Model.MaxPercentage.ToString("0.00")%</p>
+                    <p class="mb-1"><strong>Compartment:</strong> @Model.CountCompartment</p>
+                    <p class="mb-0"><strong>Fail:</strong> @Model.CountFail</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toppers Section -->
+        <div class="mb-4">
+            <h5 class="border-bottom pb-2">🏆 Toppers (Count: @Model.Toppers.Count)</h5>
+            @if (Model.Toppers.Any())
+            {
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Percentage</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int counter = 1;
+                        }
+                        @foreach (var topper in Model.Toppers)
+                        {
+                            <tr>
+                                <td>@counter</td>
+                                <td>@topper.RollNumber</td>
+                                <td>@topper.Name</td>
+                                <td>@topper.Gender</td>
+                                <td>@topper.Percentage.ToString("0.00")%</td>
+                                <td>@topper.OverallResult</td>
+                            </tr>
+                            counter++;
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-danger">No toppers found.</p>
+            }
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Above 95%</h5>
+                        <p class="card-text display-4">@Model.CountAbove95</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Above 90%</h5>
+                        <p class="card-text display-4">@Model.CountAbove90</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Passed</h5>
+                        <p class="card-text display-4">@Model.CountPass</p>
+                    </div>
+                </div>
+            </div>            
+            
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+}
