@@ -3,13 +3,34 @@
 <div class="container mt-4">
     @foreach (var subjectDetail in Model)
     {
-        <h2 class="mb-3">Subject Summary: @subjectDetail.SubjectName (@subjectDetail.SubjectCode)</h2>
-
+        @* <h2 class="mb-2">Subject Summary: @subjectDetail.SubjectName (@subjectDetail.SubjectCode)</h2> *@
+        <h2 class="mb-2 p-2 rounded bg-dark text-white">
+            Subject Summary: @subjectDetail.SubjectName (@subjectDetail.SubjectCode)
+        </h2>
         <hr />
 
         <h4>Performance Distribution</h4>
+        @* This is calculating for all students not for students of single subject *@
+       
         <div class="row">
-            <div class="col-md-3"><strong>Full Marks (100%)</strong>: @subjectDetail.FullMarks.Count</div>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>95 - 99</strong>: @subjectDetail.Above95.Count</div>
+                <div class="col-md-3"><strong>90 - 95</strong>: @subjectDetail.Between90to95.Count</div>
+                <div class="col-md-3"><strong>80 - 90</strong>: @subjectDetail.Between80n90.Count</div>
+                <div class="col-md-3"><strong>70 - 80</strong>: @subjectDetail.Between70n80.Count</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3"><strong>60 - 70</strong>: @subjectDetail.Between60n70.Count</div>
+                <div class="col-md-3"><strong>50 - 60</strong>: @subjectDetail.Between50n60.Count</div>
+                <div class="col-md-3"><strong>33 - 50</strong>: @subjectDetail.Between33n50.Count</div>
+            </div>
+            <div class="col-md-12 bg-info text-white p-2 rounded"><strong>Full Marks (100%)</strong>: @subjectDetail.FullMarks.Count</div>
+            @if (subjectDetail.FullMarks.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student having 100 out 100</div>
+            }
+
             @if (subjectDetail.FullMarks.Count > 0)
             {
                 <table class="table table-bordered table-striped">
@@ -34,11 +55,18 @@
                             <td></td>
                         </tr>
                     }
+                       
                 </tbody>
             </table>
             }
-
-            <div class="col-md-3"><strong>Above 95</strong>: @subjectDetail.Above95.Count</div>
+            @* Display list of students 95 and less than equal to 99 *@
+            <div class="col-md-12 bg-info text-white p-2 rounded">
+                <strong> 95 To 99 </strong>: @subjectDetail.Above95.Count
+            </div>
+            @if (subjectDetail.Between90to95.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student In This Category</div>
+            }
 
             @if (subjectDetail.Above95.Count > 0)
             {
@@ -68,11 +96,13 @@
                 </table>
             }
 
-
-            <div class="col-md-3"><strong>Above 90</strong>: @subjectDetail.Above90.Count</div>
-
-
-            @if (subjectDetail.Above90.Count > 0)
+            @* Display list of students between 90 and 95*@
+            <div class="col-md-12 bg-info text-white p-2 rounded"><strong> 90 To 95</strong>: @subjectDetail.Between90to95.Count</div>
+            @if (subjectDetail.Between90to95.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student In This Category</div>
+            }
+            @if (subjectDetail.Between90to95.Count > 0)
             {
                 <table class="table table-bordered table-striped">
                     <thead class="thead-dark">
@@ -85,7 +115,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var student in subjectDetail.Above90)
+                        @foreach (var student in subjectDetail.Between90to95)
                         {
                             var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
                             <tr>
@@ -100,25 +130,226 @@
                 </table>
             }
 
-            <div class="col-md-3"><strong>80 - 90</strong>: @subjectDetail.Between80n90.Count</div>
-            <div class="col-md-3"><strong>70 - 80</strong>: @subjectDetail.Between70n80.Count</div>
-            <div class="col-md-3"><strong>60 - 70</strong>: @subjectDetail.Between60n70.Count</div>
-            <div class="col-md-3"><strong>50 - 60</strong>: @subjectDetail.Between50n60.Count</div>
-            <div class="col-md-3"><strong>33 - 50</strong>: @subjectDetail.Between33n50.Count</div>
+            @* //list of students between 80 and 90 *@
+            <div class="col-md-12 bg-info text-white p-2 rounded"><strong>80 To 90</strong>: @subjectDetail.Between80n90.Count</div>
+            @if (subjectDetail.Between80n90.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student In This Category</div>
+            }
+
+            @if (subjectDetail.Between80n90.Count > 0)
+            {
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in subjectDetail.Between80n90)
+                        {
+                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                            <tr>
+                                <td>@student.RollNumber</td>
+                                <td>@student.Name</td>
+                                <td>@sub.Value.Marks</td>
+                                <td>@sub.Value.Grade</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+
+            
+            @* //list of students between 70 and 80 *@
+            <div class="col-md-12 bg-info text-white p-2 rounded"><strong>70 To 80</strong>: @subjectDetail.Between70n80.Count</div>
+            @if (subjectDetail.Between70n80.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student In This Category</div>
+            }
+
+            @if (subjectDetail.Between70n80.Count > 0)
+            {
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in subjectDetail.Between70n80)
+                        {
+                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                            <tr>
+                                <td>@student.RollNumber</td>
+                                <td>@student.Name</td>
+                                <td>@sub.Value.Marks</td>
+                                <td>@sub.Value.Grade</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+
+
+           @*  //list of students between 60 and 70 *@
+            <div class="col-md-12 bg-info text-white p-2 rounded"><strong>60 To 70</strong>: @subjectDetail.Between60n70.Count</div>
+            @if (subjectDetail.Between60n70.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student In This Category</div>
+            }
+            @if (subjectDetail.Between60n70.Count > 0)
+            {
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in subjectDetail.Between60n70)
+                        {
+                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                            <tr>
+                                <td>@student.RollNumber</td>
+                                <td>@student.Name</td>
+                                <td>@sub.Value.Marks</td>
+                                <td>@sub.Value.Grade</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+
+
+            @* //list of students between 50 and 60 *@
+            <div class="col-md-12 bg-info text-white p-2 rounded"><strong>50 To 60</strong>: @subjectDetail.Between50n60.Count</div>
+            @if (subjectDetail.Between50n60.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student In This Category</div>
+            }
+
+            @if (subjectDetail.Between50n60.Count > 0)
+            {
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in subjectDetail.Between50n60)
+                        {
+                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                            <tr>
+                                <td>@student.RollNumber</td>
+                                <td>@student.Name</td>
+                                <td>@sub.Value.Marks</td>
+                                <td>@sub.Value.Grade</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+
+            @* //list of students between 33 and 50 *@
+            <div class="col-md-12 bg-info text-white p-2 rounded"><strong>33 To 50</strong>: @subjectDetail.Between33n50.Count</div>
+            @if (subjectDetail.Between33n50.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student In This Category</div>
+            }
+
+            @if (subjectDetail.Between33n50.Count > 0)
+            {
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in subjectDetail.Between33n50)
+                        {
+                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                            <tr>
+                                <td>@student.RollNumber</td>
+                                <td>@student.Name</td>
+                                <td>@sub.Value.Marks</td>
+                                <td>@sub.Value.Grade</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @* //list of Fail students *@
+            <div class="col-md-12 bg-info text-white p-2 rounded"><strong>Fail</strong>: @subjectDetail.Fail.Count</div>
+            @if (subjectDetail.Fail.Count == 0)
+            {
+                <div class="w-100 mb-3"> No Student In This Category</div>
+            }
+
+            @if (subjectDetail.Fail.Count > 0)
+            {
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in subjectDetail.Fail)
+                        {
+                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                            <tr>
+                                <td>@student.RollNumber</td>
+                                <td>@student.Name</td>
+                                <td>@sub.Value.Marks</td>
+                                <td>@sub.Value.Grade</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+           
         </div>
+        <hr />             
 
-        <hr />
-
-        <h4>Overall Result</h4>
-        <ul>
-            <li><strong>Passed</strong>: @subjectDetail.Pass.Count</li>
-            <li><strong>Failed</strong>: @subjectDetail.Fail.Count</li>
-            <li><strong>Compartment</strong>: @subjectDetail.Compartment.Count</li>
-        </ul>
-
-        <hr />
-
-        <h4>Subject-wise Toppers</h4>
+        <h4>Top Performers</h4>
         @if (subjectDetail.SubjectWiseToppers != null)
         {
             <table class="table table-bordered table-striped">
@@ -170,7 +401,9 @@
 
 
 
-@* @model FormatResult.Models.SubjectFullDetailsViewModel
+@*  //Updated by Gagan on 8 Morning Indian Time
+    
+@model FormatResult.Models.SubjectFullDetailsViewModel
 
 @{
     // Extract all unique subjects from the SubjectWiseToppers data

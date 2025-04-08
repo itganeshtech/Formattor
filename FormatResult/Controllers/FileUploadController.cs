@@ -342,7 +342,7 @@ public class FileUploadController : Controller
                 Above95 = schoolResult.Students
                 .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks >= 95))
                 .ToList(),
-                Above90 = schoolResult.Students
+                Between90to95 = schoolResult.Students
                 .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 90 && x.Value.Marks < 95))
                 .ToList(),
                 Between80n90 = schoolResult.Students
@@ -367,7 +367,7 @@ public class FileUploadController : Controller
                 .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks < 33))
                 .ToList(),
                 Compartment = schoolResult.Students
-                .Where(s => s.OverallResult.Equals("Compartment", StringComparison.OrdinalIgnoreCase))
+                .Where(s => s.OverallResult.Equals("COMPTT", StringComparison.OrdinalIgnoreCase))
                 .ToList(),
                 SubjectWiseToppers = item.TopStudents // Add the toppers data to the view model
             });
