@@ -259,7 +259,10 @@ public class FileUploadController : Controller
             }))
         .ToList();
 
-        return PartialView("_FullMarksPartial", subjectWiseCenturions);
+        var groupViewModel = subjectWiseCenturions.GroupBy(x => x.RollNumber);
+
+        // return PartialView("_FullMarksPartial", subjectWiseCenturions);
+        return PartialView("_FullMarksPartial", groupViewModel);
     }
 
     // GET SUBJECT WISE FULL DETAIL OF STUDENTS LIKE SUBJECT TOPPER AND STUDENTS IN 90S AND 80S AND 70S
