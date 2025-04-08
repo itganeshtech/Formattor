@@ -286,46 +286,93 @@ public class FileUploadController : Controller
 
         // Get Subject-wise Top 3 Students (with ties handled)
         var subjectWiseToppers = schoolResult.Students
-								.SelectMany(student => student.Subjects, (student, subject) => new
-								{
-									SubjectCode = subject.Key,
-									SubjectName = subject.Value.SubjectName,
-									Student = new
-									{
-										student.RollNumber,
-										student.Name,
-										student.Gender,
-										student.OverallResult,
-										student.Percentage
-									},
-									Marks = subject.Value.Marks,
-									Grade = subject.Value.Grade
-								})
-								.GroupBy(x => new { x.SubjectCode, x.SubjectName })
-								.Select(g => new
-								{
-									SubjectCode = g.Key.SubjectCode,
-									SubjectName = g.Key.SubjectName,
-									TopStudents = g
-										.OrderByDescending(x => x.Marks)
-										.GroupBy(x => x.Marks)
-										.Take(3)
-										.SelectMany(group => group)
-										.Select(s => new
-										{
-											s.Student.RollNumber,
-											s.Student.Name,
-											s.SubjectCode,
-											s.SubjectName,
-											s.Marks,
-											s.Grade,
-											s.Student.Percentage
-										})
-										.ToList()
-								})
-								.ToList();
-        var tCount = subjectWiseToppers.Count;
+                                .SelectMany(student => student.Subjects, (student, subject) => new
+                                {
+                                    SubjectCode = subject.Key,
+                                    SubjectName = subject.Value.SubjectName,
+                                    Student = new
+                                    {
+                                        student.RollNumber,
+                                        student.Name,
+                                        student.Gender,
+                                        student.OverallResult,
+                                        student.Percentage
+                                    },
+                                    Marks = subject.Value.Marks,
+                                    Grade = subject.Value.Grade
+                                })
+                                .GroupBy(x => new { x.SubjectCode, x.SubjectName })
+                                .Select(g => new
+                                {
+                                    SubjectCode = g.Key.SubjectCode,
+                                    SubjectName = g.Key.SubjectName,
+                                    TopStudents = g
+                                        .OrderByDescending(x => x.Marks)
+                                        .GroupBy(x => x.Marks)
+                                        .Take(3)
+                                        .SelectMany(group => group)
+                                        .Select(s => new
+                                        {
+                                            s.Student.RollNumber,
+                                            s.Student.Name,
+                                            s.SubjectCode,
+                                            s.SubjectName,
+                                            s.Marks,
+                                            s.Grade,
+                                            s.Student.Percentage
+                                        })
+                                        .ToList()
+                                })
+                                .ToList();
 
+        var viewModel = new List<SubjectFullDetailsViewModel>();
+
+        foreach (var item in subjectWiseToppers)
+        {
+            viewModel.Add(new SubjectFullDetailsViewModel
+            {
+                SubjectName = item.SubjectName,
+                SubjectCode = item.SubjectCode,
+                FullMarks = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks == 100))
+                .ToList(),
+                Above95 = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks >= 95))
+                .ToList(),
+                Above90 = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 90 && x.Value.Marks < 95))
+                .ToList(),
+                Between80n90 = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 80 && x.Value.Marks <= 90))
+                .ToList(),
+                Between70n80 = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 70 && x.Value.Marks <= 80))
+                .ToList(),
+                Between60n70 = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 60 && x.Value.Marks <= 70))
+                .ToList(),
+                Between50n60 = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 50 && x.Value.Marks <= 60))
+                .ToList(),
+                Between33n50 = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks >= 33 && x.Value.Marks <= 50))
+                .ToList(),
+                Pass = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks >= 33))
+                .ToList(),
+                Fail = schoolResult.Students
+                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks < 33))
+                .ToList(),
+                Compartment = schoolResult.Students
+                .Where(s => s.OverallResult.Equals("Compartment", StringComparison.OrdinalIgnoreCase))
+                .ToList(),
+                SubjectWiseToppers = item.TopStudents // Add the toppers data to the view model
+            });
+        }
+
+
+
+        /*
         // Create and populate the ViewModel
         var viewModel = new SubjectFullDetailsViewModel
         {
@@ -366,7 +413,7 @@ public class FileUploadController : Controller
                 .ToList(),
             SubjectWiseToppers = subjectWiseToppers // Add the toppers data to the view model
         };
-
+        */
         return PartialView("_SubjectFullDetailsPartial", viewModel);
     }
 
