@@ -145,7 +145,7 @@ public class FileUploadController : Controller
             .SelectMany(g => g
                 .OrderByDescending(s => s.Percentage)
                 .ThenBy(s => s.Name)
-                .Select(s => new FirstToppersViewModel
+                .Select(s => new FirstToppersViewModelDetails1
                 {
                     Name = s.Name,
                     RollNumber = s.RollNumber,
@@ -155,9 +155,14 @@ public class FileUploadController : Controller
                     SubjectName = "Overall Result"
                 }))
             .ToList();
-        // return PartialView("_FirstToppersPartial", result);
-        return PartialView("_TopPerformersPercentWise", result);
 
+        FirstToppersViewModel firstToppersViewModel = new FirstToppersViewModel()
+        {
+            Percentages = topPercentages.ToList(),
+            FirstToppersViewModelDetails = result
+        };
+
+        return PartialView("_TopPerformersPercentWise", firstToppersViewModel);
     }
 
     //TO DISPLAY PERCENTAGE OF ALL THE STUDENTS
@@ -224,7 +229,8 @@ public class FileUploadController : Controller
                     .ToHashSet(); // Using HashSet for fast lookup
 
                 // Return all students who have those marks
-                return group.Where(s => topMarks.Contains(s.Marks));
+                return group.Where(s => topMarks.Contains(s.Marks))
+                .OrderByDescending(s => s.Marks);
             })
             .ToList();
 
@@ -337,86 +343,44 @@ public class FileUploadController : Controller
                 SubjectName = item.SubjectName,
                 SubjectCode = item.SubjectCode,
                 FullMarks = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks == 100))
+                .Where(x => x.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks == 100))
                 .ToList(),
                 Above95 = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks >= 95))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks >= 95))
                 .ToList(),
                 Between90to95 = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 90 && x.Value.Marks < 95))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks > 90 && x.Value.Marks < 95))
                 .ToList(),
                 Between80n90 = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 80 && x.Value.Marks <= 90))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks > 80 && x.Value.Marks <= 90))
                 .ToList(),
                 Between70n80 = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 70 && x.Value.Marks <= 80))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks > 70 && x.Value.Marks <= 80))
                 .ToList(),
                 Between60n70 = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 60 && x.Value.Marks <= 70))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks > 60 && x.Value.Marks <= 70))
                 .ToList(),
                 Between50n60 = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks > 50 && x.Value.Marks <= 60))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks > 50 && x.Value.Marks <= 60))
                 .ToList(),
                 Between33n50 = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks >= 33 && x.Value.Marks <= 50))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks >= 33 && x.Value.Marks <= 50))
                 .ToList(),
                 Pass = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks >= 33))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks >= 33))
                 .ToList(),
                 Fail = schoolResult.Students
-                .Where(s => s.Subjects.Any(x => x.Key == subjectCode && x.Value.Marks < 33))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks < 33)
+                    && s.OverallResult.Equals("FAIL", StringComparison.OrdinalIgnoreCase))
                 .ToList(),
                 Compartment = schoolResult.Students
-                .Where(s => s.OverallResult.Equals("COMPTT", StringComparison.OrdinalIgnoreCase))
+                .Where(s => s.Subjects.Any(x => x.Key == item.SubjectCode && x.Value.Marks < 33)
+                    && s.OverallResult.Equals("COMP", StringComparison.OrdinalIgnoreCase))
                 .ToList(),
                 SubjectWiseToppers = item.TopStudents // Add the toppers data to the view model
             });
         }
 
-
-
-        /*
-        // Create and populate the ViewModel
-        var viewModel = new SubjectFullDetailsViewModel
-        {
-            SubjectName = subjectName,
-            SubjectCode = subjectCode,
-            FullMarks = schoolResult.Students
-                .Where(s => s.Percentage == 100)
-                .ToList(),
-            Above95 = schoolResult.Students
-                .Where(s => s.Percentage >= 95)
-                .ToList(),
-            Above90 = schoolResult.Students
-                .Where(s => s.Percentage > 90 && s.Percentage<95)
-                .ToList(),
-            Between80n90 = schoolResult.Students
-                .Where(s => s.Percentage > 80 && s.Percentage <= 90)
-                .ToList(),
-            Between70n80 = schoolResult.Students
-                .Where(s => s.Percentage > 70 && s.Percentage <= 80)
-                .ToList(),
-            Between60n70 = schoolResult.Students
-                .Where(s => s.Percentage > 60 && s.Percentage <= 70)
-                .ToList(),
-            Between50n60 = schoolResult.Students
-                .Where(s => s.Percentage > 50 && s.Percentage <= 60)
-                .ToList(),
-            Between33n50 = schoolResult.Students
-                .Where(s => s.Percentage >= 33 && s.Percentage <= 50)
-                .ToList(),
-            Pass = schoolResult.Students
-                .Where(s => s.OverallResult.Equals("Pass", StringComparison.OrdinalIgnoreCase))
-                .ToList(),
-            Fail = schoolResult.Students
-                .Where(s => s.OverallResult.Equals("Fail", StringComparison.OrdinalIgnoreCase))
-                .ToList(),
-            Compartment = schoolResult.Students
-                .Where(s => s.OverallResult.Equals("Compartment", StringComparison.OrdinalIgnoreCase))
-                .ToList(),
-            SubjectWiseToppers = subjectWiseToppers // Add the toppers data to the view model
-        };
-        */
         return PartialView("_SubjectFullDetailsPartial", viewModel);
     }
 
@@ -445,70 +409,3 @@ public class FileUploadController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
-
-
-/*
- * 
- * 
- * public IActionResult GetSubjectFullSummary()
-{
-    // Deserialize the JSON string back to SchoolResult object
-    var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
-    var schoolResult = schoolResultJson != null
-        ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
-        : new SchoolResult();
-
-    // 1. Get Subject-wise Top 3 Students (with ties handled)
-    var subjectWiseToppers = schoolResult.Students
-        .SelectMany(student => student.Subjects, (student, subject) => new
-        {
-            SubjectCode = subject.Key,
-            SubjectName = subject.Value.SubjectName,
-            Student = student,
-            Marks = subject.Value.Marks,
-            Percentage = student.Percentage
-        })
-        .GroupBy(x => new { x.SubjectCode, x.SubjectName })
-        .Select(g => new
-        {
-            SubjectCode = g.Key.SubjectCode,
-            SubjectName = g.Key.SubjectName,
-            TopStudents = g
-                .OrderByDescending(x => x.Marks)
-                .GroupBy(x => x.Marks)
-                .Take(3) // Top 3 distinct mark ranges
-                .SelectMany(group => group) // Flatten groups (handles ties)
-                .ToList()
-        })
-        .ToList();
-
-    // 2. Counts (same as before)
-    int above95Count = schoolResult.Students.Count(s => s.Percentage > 95);
-    int above90Count = schoolResult.Students.Count(s => s.Percentage > 90);
-    int passCount = schoolResult.Students.Count(s => s.OverallResult.Equals("Pass", StringComparison.OrdinalIgnoreCase));
-    int compartmentCount = schoolResult.Students.Count(s => s.OverallResult.Equals("Compartment", StringComparison.OrdinalIgnoreCase));
-    int failCount = schoolResult.Students.Count(s => s.OverallResult.Equals("Fail", StringComparison.OrdinalIgnoreCase));
-
-    // 3. Prepare ViewModel (optional: populate subject-wise ranges)
-    var viewModel = new SubjectFullSummaryViewModel
-    {
-        // ... (same as before)
-    };
-
-    // Return data
-    return PartialView("_FullSubjectSummaryPartial", new
-    {
-        SubjectWiseToppers = subjectWiseToppers,
-        Above95Count = above95Count,
-        Above90Count = above90Count,
-        PassCount = passCount,
-        CompartmentCount = compartmentCount,
-        FailCount = failCount,
-        Summary = viewModel
-    });
-}
- * 
- * */
-
-
-
