@@ -38,7 +38,7 @@ public class FileUploadController : Controller
                 Directory.CreateDirectory(uploadsFolder);
             }
 
-            var filePath = Path.Combine(uploadsFolder, uploadedFile.FileName);
+            var filePath = Path.Combine(uploadsFolder, uploadedFile.FileName + Guid.NewGuid());
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await uploadedFile.CopyToAsync(stream);
@@ -48,6 +48,8 @@ public class FileUploadController : Controller
 
             // Serialize the schoolResult object to JSON and store it in TempData
             //TempData["SchoolResult"] = JsonConvert.SerializeObject(schoolResult);
+
+            // System.IO.File.Delete(filePath);
 
             HttpContext.Session.SetString("SchoolResult", JsonConvert.SerializeObject(schoolResult));
 
