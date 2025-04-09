@@ -1,0 +1,153 @@
+﻿/* Fancy sparkling multi-color effect with cool gentle gradient */
+.fancy-heading {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    background: linear-gradient(90deg, #a1c4fd, /* Light Blue */
+    #c2e9fb, /* Soft Sky */
+    #d4fc79, /* Gentle Green */
+    #a1c4fd /* Loop back to Light Blue */
+    );
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: sparkle 6s infinite linear;
+    text-shadow: 0 0 10px rgba(161, 196, 253, 0.5), 0 0 20px rgba(194, 233, 251, 0.5);
+}
+
+@keyframes sparkle {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+#centerAll {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f0f4f8;
+}
+
+/* Main Container */
+/*#fullBox {
+    background-color: #fff;
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #f9ffcc, #96e6a1);
+    width: 90%;
+    max-width: 1000px;*/ /* doubled from 500px */
+    /*padding: 40px;*/ /* doubled from 20px */
+    /*box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 17px;
+    animation: fadeIn 0.5s ease-in-out;
+}*/
+
+#fullBox {
+    background-color: #fff;
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    align-items: center;
+    /* background: linear-gradient(to right, #f9ffcc, #96e6a1);*/
+    /*background: #D8BFD8;*/
+    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    width: 90%;
+    max-width: 1000px;
+    /* Increased vertical size */
+    padding-top: 140px; /* was 40px */
+    padding-bottom: 80px; /* was 40px */
+    /*box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);*/
+
+    box-shadow: 0 12px 30px rgba(100, 100, 255, 0.2);
+    border-radius: 17px;
+    animation: fadeIn 0.5s ease-in-out;
+    min-height: 700px; /* Add this if you want a taller box */
+}
+
+
+hr {
+    border: none;
+    height: 1px;
+    background: #ccc;
+    margin: 20px 0;
+}
+
+#filebox {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    margin-bottom: 20px;
+}
+
+#filelabel label {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+#fileInput input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 4px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+    #fileInput input[type="file"]:hover,
+    #fileInput input[type="file"]:focus {
+        border-color: #a1c4fd;
+        outline: none;
+    }
+
+#subButton button {
+    background: linear-gradient(to right, #56ccf2, #2f80ed);
+    border: none;
+    padding: 12px 140px;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    #subButton button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(86, 204, 242, 0.3);
+    }
+
+#statusBox {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    #fullBox {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
