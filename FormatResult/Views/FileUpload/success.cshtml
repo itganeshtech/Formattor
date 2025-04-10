@@ -9,6 +9,9 @@
         <p >File Name: <strong>@Model.FileName</strong></p>
         <p >School Name: <strong>@Model.SchoolResult.SchoolName</strong></p>
         <p >Total Number of Students Enrolled: <strong>@Model.SchoolResult.Students.Count</strong></p>
+        <a asp-controller="FileUpload" asp-action="DownloadExcel" class="btn btn-secondary">
+               Download Results in Excel
+        </a>
     </div>
 </div>
 

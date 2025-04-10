@@ -1,5 +1,6 @@
 using AspNetCoreGeneratedDocument;
 using BusinessLogic;
+using ClosedXML.Excel;
 using FormatModals;
 using FormatResult.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ public class FileUploadController : Controller
 {
     private readonly ILogger<FileUploadController> _logger;
     private readonly IWebHostEnvironment _environment;
+
     public FileUploadController(ILogger<FileUploadController> logger, IWebHostEnvironment environment)
     {
         _logger = logger;
@@ -24,7 +26,6 @@ public class FileUploadController : Controller
         return View();
     }
 
-    // POST: File/Upload
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile uploadedFile)
 
@@ -61,7 +62,6 @@ public class FileUploadController : Controller
 
     }
 
-    // GET: File/Success
     public IActionResult Success(string fileName)
     {
         // Deserialize the JSON string back to SchoolResult object
@@ -82,11 +82,11 @@ public class FileUploadController : Controller
         return View(model);
     }
 
-
     public IActionResult GsIntro()
     {
         return View();
     }
+
     public IActionResult Privacy()
     {
         return View();
@@ -100,21 +100,7 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult();
 
-        var maxPercentage = schoolResult.Students.Max(s => s.Percentage);
-
-        var viewModel = new OverallSummaryViewModel
-        {
-            SchoolResult = schoolResult,
-            Toppers = schoolResult.Students
-                .Where(s => s.Percentage == maxPercentage)
-                .ToList(),
-            CountAbove95 = schoolResult.Students.Count(s => s.Percentage > 95),
-            CountAbove90 = schoolResult.Students.Count(s => s.Percentage > 90),
-            CountPass = schoolResult.Students.Count(s => s.OverallResult.Equals("Pass", StringComparison.OrdinalIgnoreCase)),
-            CountFail = schoolResult.Students.Count(s => s.OverallResult.Equals("Fail", StringComparison.OrdinalIgnoreCase)),
-            CountCompartment = schoolResult.Students.Count(s => s.OverallResult.Equals("Compartment", StringComparison.OrdinalIgnoreCase)),
-            MaxPercentage = maxPercentage
-        };
+        OverallSummaryViewModel viewModel = GetOverallSummaryViewModelLocal(schoolResult);
 
         return PartialView("_OverallSummaryPartial", viewModel);
     }
@@ -130,39 +116,7 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        // Simulating getting the top  students
-        // Get distinct percentages and find top 3
-        var topPercentages = schoolResult.Students
-            .Select(s => s.Percentage)
-            .Distinct()
-            .OrderByDescending(p => p)
-            .Take(3)
-            .ToList();
-
-        // Group  top performing students on the basis of percentage
-        var result = schoolResult.Students
-            .Where(s => topPercentages.Contains(s.Percentage))
-            .GroupBy(s => s.Percentage)
-            .OrderByDescending(g => g.Key)
-            .SelectMany(g => g
-                .OrderByDescending(s => s.Percentage)
-                .ThenBy(s => s.Name)
-                .Select(s => new FirstToppersViewModelDetails1
-                {
-                    Name = s.Name,
-                    RollNumber = s.RollNumber,
-                    Percentage = s.Percentage,
-                    Student = s,
-                    SubjectCode = "",   //s.Subjects.ToLookup<>"",
-                    SubjectName = "Overall Result"
-                }))
-            .ToList();
-
-        FirstToppersViewModel firstToppersViewModel = new FirstToppersViewModel()
-        {
-            Percentages = topPercentages.ToList(),
-            FirstToppersViewModelDetails = result
-        };
+        FirstToppersViewModel firstToppersViewModel = GetFirstToppersViewModelLocal(schoolResult);
 
         return PartialView("_TopPerformersPercentWise", firstToppersViewModel);
     }
@@ -410,4 +364,144 @@ public class FileUploadController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    public IActionResult DownloadExcel()
+    {
+        var schoolResultJson = HttpContext.Session.GetString("SchoolResult");
+        var schoolResult = schoolResultJson != null
+            ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
+            : new SchoolResult();
+
+        OverallSummaryViewModel viewModel = GetOverallSummaryViewModelLocal(schoolResult);
+        FirstToppersViewModel firstToppersViewModel = GetFirstToppersViewModelLocal(schoolResult);
+
+        using (var workbook = new XLWorkbook())
+        {
+            // Sheet 1: Summary
+            var summarySheet = workbook.Worksheets.Add("Summary");
+            summarySheet.Cell(1, 1).Value = "Max Percentage";
+            summarySheet.Cell(1, 2).Value = viewModel.MaxPercentage;
+
+            summarySheet.Cell(2, 1).Value = "Count > 95%";
+            summarySheet.Cell(2, 2).Value = viewModel.CountAbove95;
+
+            summarySheet.Cell(3, 1).Value = "Count > 90%";
+            summarySheet.Cell(3, 2).Value = viewModel.CountAbove90;
+
+            summarySheet.Cell(4, 1).Value = "Count Pass";
+            summarySheet.Cell(4, 2).Value = viewModel.CountPass;
+
+            summarySheet.Cell(5, 1).Value = "Count Fail";
+            summarySheet.Cell(5, 2).Value = viewModel.CountFail;
+
+            summarySheet.Cell(6, 1).Value = "Count Compartment";
+            summarySheet.Cell(6, 2).Value = viewModel.CountCompartment;
+
+            // Sheet 2: Toppers
+            var toppersSheet = workbook.Worksheets.Add("Toppers");
+            toppersSheet.Cell(1, 1).Value = "Name";
+            toppersSheet.Cell(1, 2).Value = "Percentage";
+            toppersSheet.Cell(1, 3).Value = "Result";
+
+            for (int i = 0; i < viewModel.Toppers.Count; i++)
+            {
+                var student = viewModel.Toppers[i];
+                toppersSheet.Cell(i + 2, 1).Value = student.Name;
+                toppersSheet.Cell(i + 2, 2).Value = student.Percentage;
+                toppersSheet.Cell(i + 2, 3).Value = student.OverallResult;
+            }
+
+            // Sheet 3: Top Performers
+            var performersSheet = workbook.Worksheets.Add("Top Performers");
+            performersSheet.Cell(1, 1).Value = "Name";
+            performersSheet.Cell(1, 2).Value = "Roll Number";
+            performersSheet.Cell(1, 3).Value = "Percentage";
+            performersSheet.Cell(1, 4).Value = "Subject Name";
+            performersSheet.Cell(1, 5).Value = "Subject Code";
+
+            for (int i = 0; i < firstToppersViewModel.FirstToppersViewModelDetails.Count; i++)
+            {
+                var student = firstToppersViewModel.FirstToppersViewModelDetails[i];
+                performersSheet.Cell(i + 2, 1).Value = student.Name;
+                performersSheet.Cell(i + 2, 2).Value = student.RollNumber;
+                performersSheet.Cell(i + 2, 3).Value = student.Percentage;
+                performersSheet.Cell(i + 2, 4).Value = student.SubjectName;
+                performersSheet.Cell(i + 2, 5).Value = student.SubjectCode;
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                workbook.SaveAs(stream);
+                var content = stream.ToArray();
+                return File(content,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "SchoolResultSummary.xlsx");
+            }
+        }
+    }
+
+
+    #region private methods
+
+    private OverallSummaryViewModel GetOverallSummaryViewModelLocal(SchoolResult schoolResult)
+    {
+        var maxPercentage = schoolResult.Students.Max(s => s.Percentage);
+
+        var viewModel = new OverallSummaryViewModel
+        {
+            SchoolResult = schoolResult,
+            Toppers = schoolResult.Students
+                .Where(s => s.Percentage == maxPercentage)
+                .ToList(),
+            CountAbove95 = schoolResult.Students.Count(s => s.Percentage > 95),
+            CountAbove90 = schoolResult.Students.Count(s => s.Percentage > 90),
+            CountPass = schoolResult.Students.Count(s => s.OverallResult.Equals("Pass", StringComparison.OrdinalIgnoreCase)),
+            CountFail = schoolResult.Students.Count(s => s.OverallResult.Equals("Fail", StringComparison.OrdinalIgnoreCase)),
+            CountCompartment = schoolResult.Students.Count(s => s.OverallResult.Equals("Compartment", StringComparison.OrdinalIgnoreCase)),
+            MaxPercentage = maxPercentage
+        };
+
+        return viewModel;
+    }
+
+    private FirstToppersViewModel GetFirstToppersViewModelLocal(SchoolResult schoolResult)
+    {
+        // Simulating getting the top  students
+        // Get distinct percentages and find top 3
+        var topPercentages = schoolResult.Students
+            .Select(s => s.Percentage)
+            .Distinct()
+            .OrderByDescending(p => p)
+            .Take(3)
+            .ToList();
+
+        // Group  top performing students on the basis of percentage
+        var result = schoolResult.Students
+            .Where(s => topPercentages.Contains(s.Percentage))
+            .GroupBy(s => s.Percentage)
+            .OrderByDescending(g => g.Key)
+            .SelectMany(g => g
+                .OrderByDescending(s => s.Percentage)
+                .ThenBy(s => s.Name)
+                .Select(s => new FirstToppersViewModelDetails1
+                {
+                    Name = s.Name,
+                    RollNumber = s.RollNumber,
+                    Percentage = s.Percentage,
+                    Student = s,
+                    SubjectCode = "",   //s.Subjects.ToLookup<>"",
+                    SubjectName = "Overall Result"
+                }))
+            .ToList();
+
+        FirstToppersViewModel firstToppersViewModel = new FirstToppersViewModel()
+        {
+            Percentages = topPercentages.ToList(),
+            FirstToppersViewModelDetails = result
+        };
+
+        return firstToppersViewModel;
+    }
+
+    #endregion
 }
