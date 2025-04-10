@@ -41,7 +41,9 @@ namespace BusinessLogic
                 }
                 else if (Regex.IsMatch(line, "\\d{8}\\s+[MF]"))
                 {
-                    var match = Regex.Match(line, @"(\d{8})\s+([MF])\s+(.+?)\s+((\d{3}\s+)+)([A-Z0-9 ]+)\s+(PASS|FAIL)");
+                    // var match = Regex.Match(line, @"(\d{8})\s+([MF])\s+(.+?)\s+((\d{3}\s+)+)([A-Z0-9 ]+)\s+(PASS|FAIL)");
+                    var match = Regex.Match(line, @"(\d{8})\s+([MF])\s+(.+?)\s+((\d{3}\s+)+)([A-Z0-9 ]+)\s+(PASS|FAIL|COMP)");
+
                     if (match.Success)
                     {
                         currentStudent = new Student
@@ -63,21 +65,32 @@ namespace BusinessLogic
 
         private static void ParseSubjects(Student student, string subjectData, string[] lines, int lineIndex)
         {
-            string nextLine = lines[lineIndex + 1];
-            string pattern = @"\b\d{3}\b"; // Match exactly 3 digits (subject codes)
-
-            // Find matches in the input string
-            var matches = Regex.Matches(subjectData, pattern);
-
-            int marksIndex = 65;
-            foreach (Match match in matches)
+            try
             {
-                if (SubjectMaster.SubjectLookup.ContainsKey(match.Value))
-                {
-                    student.Subjects[match.Value] = (SubjectMaster.SubjectLookup[match.Value], int.Parse(nextLine.Substring(marksIndex, 3).Trim()), nextLine.Substring(marksIndex + 4, 3).Trim());
-                    marksIndex += 8;
-                }
+                string nextLine = lines[lineIndex + 1];
+                string pattern = @"\b\d{3}\b"; // Match exactly 3 digits (subject codes)
 
+                // Find matches in the input string
+                var matches = Regex.Matches(subjectData, pattern);
+
+                var uniqueMatches = matches
+                   .Cast<Match>()
+                   .Select(m => m.Value)
+                   .Distinct().ToList();
+
+                int marksIndex = 65;
+                foreach (var match in uniqueMatches)
+                {
+                    if (SubjectMaster.SubjectLookup.ContainsKey(match))
+                    {
+                        student.Subjects[match] = (SubjectMaster.SubjectLookup[match], int.Parse(nextLine.Substring(marksIndex, 3).Trim()), nextLine.Substring(marksIndex + 4, 3).Trim());
+                        marksIndex += 8;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

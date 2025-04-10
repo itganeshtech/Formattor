@@ -1,444 +1,450 @@
 ﻿@model List<FormatResult.Models.SubjectFullDetailsViewModel>
 
-<div class="container mt-4">
-    @foreach (var subjectDetail in Model)
-    {
-        <h2 class="mb-3">Subject Summary: @subjectDetail.SubjectName (@subjectDetail.SubjectCode)</h2>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-        <hr />
+<div class="card shadow-lg p-3 mb-5 bg-white rounded">
+    <div class="card-header bg-primary text-white">
+        <h4>✨Subject Wise Full Analysis</h4>
+    </div>
+    <div class="card-body">
 
-        <h4>Performance Distribution</h4>
-        <div class="row">
-            <div class="col-md-3"><strong>Full Marks (100%)</strong>: @subjectDetail.FullMarks.Count</div>
-            @if (subjectDetail.FullMarks.Count > 0)
+        <div class="container mt-4">
+            @foreach (var subjectDetail in Model)
             {
-                <table class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Roll Number</th>
-                            <th>Name</th>
-                            <th>Marks</th>
-                            <th>Grade</th>
-                            <th>Percentage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var student in subjectDetail.FullMarks)
-                        {
-                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
-                            <tr>
-                                <td>@student.RollNumber</td>
-                            <td>@student.Name</td>
-                            <td>@sub.Value.Marks</td >
-                            <td>@sub.Value.Grade</td>
-                            <td></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            }
+                @* <h2 class="mb-2">Subject Summary: @subjectDetail.SubjectName (@subjectDetail.SubjectCode)</h2> *@
+                <h4 class="mb-2 p-2 rounded bg-dark text-white">
+                    Subject Summary: @subjectDetail.SubjectName (@subjectDetail.SubjectCode)
+                </h4>
+                <hr />
 
-            <div class="col-md-3"><strong>Above 95</strong>: @subjectDetail.Above95.Count</div>
+                <h4>Performance Distribution:@subjectDetail.SubjectName</h4>
+                @* This is calculating for all students not for students of single subject *@
 
-            @if (subjectDetail.Above95.Count > 0)
-            {
-                <table class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Roll Number</th>
-                            <th>Name</th>
-                            <th>Marks</th>
-                            <th>Grade</th>
-                            <th>Percentage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var student in subjectDetail.Above95)
+                <div class="row">
+                    <div class="row mb-2">
+                        <div class="col-md-3"><strong>95 - 99</strong>: @subjectDetail.Above95.Count</div>
+                        <div class="col-md-3"><strong>90 - 95</strong>: @subjectDetail.Between90to95.Count</div>
+                        <div class="col-md-3"><strong>80 - 90</strong>: @subjectDetail.Between80n90.Count</div>
+                        <div class="col-md-3"><strong>70 - 80</strong>: @subjectDetail.Between70n80.Count</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"><strong>60 - 70</strong>: @subjectDetail.Between60n70.Count</div>
+                        <div class="col-md-3"><strong>50 - 60</strong>: @subjectDetail.Between50n60.Count</div>
+                        <div class="col-md-3"><strong>33 - 50</strong>: @subjectDetail.Between33n50.Count</div>
+                    </div>
+                </div>
+                
+                    <div class="col-md-12 mt-3">
+                        <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseFullMarks">
+                            <strong>Full marks in: @subjectDetail.SubjectName</strong>&nbsp;&nbsp;:Count: @subjectDetail.FullMarks.Count <strong>&nbsp;Click Me</strong>
+                        </button>
+                    </div>
+                    <div id="collapseFullMarks" class="collapse mt-2">
+                        @if (subjectDetail.FullMarks.Count > 0)
                         {
-                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
-                            <tr>
-                                <td>@student.RollNumber</td>
-                                <td>@student.Name</td>
-                                <td>@sub.Value.Marks</td>
-                                <td>@sub.Value.Grade</td>
-                                <td></td>
-                            </tr>
+                            <table class="table table-bordered table-striped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Roll Number</th>
+                                        <th>Name</th>
+                                        <th>Marks</th>
+                                        <th>Grade</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var student in subjectDetail.FullMarks)
+                                    {
+                                        var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                        <tr>
+                                            <td>@student.RollNumber</td>
+                                            <td>@student.Name</td>
+                                            <td>@sub.Value.Marks</td>
+                                            <td>@sub.Value.Grade</td>
+                                            <td></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         }
-                    </tbody>
-                </table>
-            }
-
-
-            <div class="col-md-3"><strong>Above 90</strong>: @subjectDetail.Above90.Count</div>
-
-
-            @if (subjectDetail.Above90.Count > 0)
-            {
-                <table class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Roll Number</th>
-                            <th>Name</th>
-                            <th>Marks</th>
-                            <th>Grade</th>
-                            <th>Percentage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var student in subjectDetail.Above90)
+                        else
                         {
-                            var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
-                            <tr>
-                                <td>@student.RollNumber</td>
-                                <td>@student.Name</td>
-                                <td>@sub.Value.Marks</td>
-                                <td>@sub.Value.Grade</td>
-                                <td></td>
-                            </tr>
+                            <div>No students scored in this range.</div>
                         }
-                    </tbody>
-                </table>
-            }
+                    </div>
+               
 
-            <div class="col-md-3"><strong>80 - 90</strong>: @subjectDetail.Between80n90.Count</div>
-            <div class="col-md-3"><strong>70 - 80</strong>: @subjectDetail.Between70n80.Count</div>
-            <div class="col-md-3"><strong>60 - 70</strong>: @subjectDetail.Between60n70.Count</div>
-            <div class="col-md-3"><strong>50 - 60</strong>: @subjectDetail.Between50n60.Count</div>
-            <div class="col-md-3"><strong>33 - 50</strong>: @subjectDetail.Between33n50.Count</div>
-        </div>
-
-        <hr />
-
-        <h4>Overall Result</h4>
-        <ul>
-            <li><strong>Passed</strong>: @subjectDetail.Pass.Count</li>
-            <li><strong>Failed</strong>: @subjectDetail.Fail.Count</li>
-            <li><strong>Compartment</strong>: @subjectDetail.Compartment.Count</li>
-        </ul>
-
-        <hr />
-
-        <h4>Subject-wise Toppers</h4>
-        @if (subjectDetail.SubjectWiseToppers != null)
-        {
-            <table class="table table-bordered table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Roll Number</th>
-                        <th>Name</th>
-                        <th>Marks</th>
-                        <th>Grade</th>
-                        <th>Percentage</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var student in subjectDetail.SubjectWiseToppers)
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseAbove95">
+                        <strong>@subjectDetail.SubjectName: From 95 to 99</strong>&nbsp;&nbsp;:Count: @subjectDetail.Above95.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseAbove95" class="collapse mt-2">
+                    @if (subjectDetail.Above95.Count > 0)
                     {
-                        <tr>
-                            <td>@student.RollNumber</td>
-                            <td>@student.Name</td>
-                            <td>@student.Marks</td>
-                            <td>@student.Grade</td>
-                            <td>@student.Percentage%</td>
-                        </tr>
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Above95)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p>No topper data available.</p>
-        }
-    }
-</div>
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@* @model FormatResult.Models.SubjectFullDetailsViewModel
-
-@{
-    // Extract all unique subjects from the SubjectWiseToppers data
-    var subjects = Model.SubjectWiseToppers
-        .SelectMany(x => x.TopStudents)
-        .GroupBy(s => new { s.SubjectCode, s.SubjectName })
-        .Select(g => g.First())
-        .ToList();
-}
-
-<div class="subject-reports-container">
-    @foreach (var subject in subjects)
-    {
-        <div class="subject-report">
-            <h2>@subject.SubjectName (@subject.SubjectCode)</h2>
-
-            <!-- 100 Scorers -->
-            <div class="marks-category">
-                <h3>100 Scorers:</h3>
-                @{
-                    var fullMarks = Model.SubjectWiseToppers
-                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
-                        .TopStudents
-                        .Where(s => s.Marks == 100)
-                        .ToList();
-                }
-                @if (fullMarks?.Any() == true)
-                {
-                    <table class="student-table">
-                        <thead>
-                            <tr>
-                                <th>Roll Number</th>
-                                <th>Name</th>
-                                <th>Marks</th>
-                                <th>Percentage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var student in fullMarks)
-                            {
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseBetween90to95">
+                        <strong>@subjectDetail.SubjectName: 91 to 94</strong>&nbsp;&nbsp;:Count: @subjectDetail.Between90to95.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseBetween90to95" class="collapse mt-2">
+                    @if (subjectDetail.Above95.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
                                 <tr>
-                                    <td>@student.RollNumber</td>
-                                    <td>@student.Name</td>
-                                    <td>@student.Marks</td>
-                                    <td>@student.Percentage.ToString("0.00")%</td>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>No students scored 100 marks in this subject.</p>
-                }
-            </div>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Between90to95)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
 
-            <!-- Above 95 -->
-            <div class="marks-category">
-                <h3>Above 95:</h3>
-                @{
-                    var above95 = Model.SubjectWiseToppers
-                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
-                        .TopStudents
-                        .Where(s => s.Marks > 95 && s.Marks < 100)
-                        .ToList();
-                }
-                @if (above95?.Any() == true)
-                {
-                    <table class="student-table">
-                        <thead>
-                            <tr>
-                                <th>Roll Number</th>
-                                <th>Name</th>
-                                <th>Marks</th>
-                                <th>Percentage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var student in above95)
-                            {
+
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseBetween80n90">
+                        <strong>@subjectDetail.SubjectName: 81 to 90</strong>&nbsp;&nbsp;:Count: @subjectDetail.Between80n90.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseBetween80n90" class="collapse mt-2">
+                    @if (subjectDetail.Between80n90.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
                                 <tr>
-                                    <td>@student.RollNumber</td>
-                                    <td>@student.Name</td>
-                                    <td>@student.Marks</td>
-                                    <td>@student.Percentage.ToString("0.00")%</td>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>No students scored above 95 marks in this subject.</p>
-                }
-            </div>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Between80n90)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
 
-            <!-- >90 and <95 -->
-            <div class="marks-category">
-                <h3>>90 and <95:</h3>
-                @{
-                    var above90Below95 = Model.SubjectWiseToppers
-                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
-                        .TopStudents
-                        .Where(s => s.Marks > 90 && s.Marks <= 95)
-                        .ToList();
-                }
-                @if (above90Below95?.Any() == true)
-                {
-                    <table class="student-table">
-                        <thead>
-                            <tr>
-                                <th>Roll Number</th>
-                                <th>Name</th>
-                                <th>Marks</th>
-                                <th>Percentage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var student in above90Below95)
-                            {
+
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseBetween70n80">
+                        <strong>@subjectDetail.SubjectName: 71 to 80</strong>&nbsp;&nbsp;:Count: @subjectDetail.Between70n80.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseBetween70n80" class="collapse mt-2">
+                    @if (subjectDetail.Between70n80.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
                                 <tr>
-                                    <td>@student.RollNumber</td>
-                                    <td>@student.Name</td>
-                                    <td>@student.Marks</td>
-                                    <td>@student.Percentage.ToString("0.00")%</td>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>No students scored between 90 and 95 marks in this subject.</p>
-                }
-            </div>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Between70n80)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
 
-            <!-- Continue with other categories following the same pattern -->
-            <!-- >80 and <=90 -->
-            <div class="marks-category">
-                <h3>>80 and <=90:</h3>
-                @{
-                    var above80Below90 = Model.SubjectWiseToppers
-                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
-                        .TopStudents
-                        .Where(s => s.Marks > 80 && s.Marks <= 90)
-                        .ToList();
-                }
-                @if (above80Below90?.Any() == true)
-                {
-                    <table class="student-table">
-                        <!-- Table structure same as above -->
-                    </table>
-                }
-                else
-                {
-                    <p>No students scored between 80 and 90 marks in this subject.</p>
-                }
-            </div>
 
-            <!-- >70 and <=80 -->
-            <div class="marks-category">
-                <h3>>70 and <=80:</h3>
-                <!-- Similar implementation -->
-            </div>
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseBetween60n70">
+                        <strong>@subjectDetail.SubjectName: 61 to 70</strong>&nbsp;&nbsp;:Count: @subjectDetail.Between60n70.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseBetween60n70" class="collapse mt-2">
+                    @if (subjectDetail.Between60n70.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Between60n70)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
 
-            <!-- >60 and <=70 -->
-            <div class="marks-category">
-                <h3>>60 and <=70:</h3>
-                <!-- Similar implementation -->
-            </div>
 
-            <!-- >50 and <=60 -->
-            <div class="marks-category">
-                <h3>>50 and <=60:</h3>
-                <!-- Similar implementation -->
-            </div>
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseBetween50n60">
+                        <strong>@subjectDetail.SubjectName: 51 to 60</strong>&nbsp;&nbsp;:Count: @subjectDetail.Between50n60.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseBetween50n60" class="collapse mt-2">
+                    @if (subjectDetail.Between50n60.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Between50n60)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
 
-            <!-- >=33 and <=50 -->
-            <div class="marks-category">
-                <h3>>=33 and <=50:</h3>
-                <!-- Similar implementation -->
-            </div>
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseBetween33n50">
+                        <strong>@subjectDetail.SubjectName: 33 to 50</strong>&nbsp;&nbsp;:Count: @subjectDetail.Between33n50.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseBetween33n50" class="collapse mt-2">
+                    @if (subjectDetail.Between33n50.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Between33n50)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
 
-            <!-- Pass Students -->
-            <div class="result-category">
-                <h3>Pass Students:</h3>
-                @{
-                    var passStudents = Model.SubjectWiseToppers
-                        .FirstOrDefault(x => x.SubjectCode == subject.SubjectCode)?
-                        .TopStudents
-                        .Where(s => s.OverallResult.Equals("Pass", StringComparison.OrdinalIgnoreCase))
-                        .ToList();
-                }
-                <!-- Table implementation -->
-            </div>
 
-            <!-- Fail Students -->
-            <div class="result-category">
-                <h3>Fail Students:</h3>
-                <!-- Similar implementation for fail students -->
-            </div>
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseCompartment">
+                        <strong>@subjectDetail.SubjectName: Compartment</strong>&nbsp;&nbsp;:Count: @subjectDetail.Compartment.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseCompartment" class="collapse mt-2">
+                    @if (subjectDetail.Compartment.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Compartment)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
 
-            <!-- Compartment Students -->
-            <div class="result-category">
-                <h3>Compartment Students:</h3>
-                <!-- Similar implementation for compartment students -->
-            </div>
 
-            <hr class="subject-divider" />
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-info text-dark w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapseFail">
+                        <strong>@subjectDetail.SubjectName: FAIL</strong>&nbsp;&nbsp;:Count: @subjectDetail.Fail.Count <strong>&nbsp;Click Me</strong>
+                    </button>
+                </div>
+                <div id="collapseFail" class="collapse mt-2">
+                    @if (subjectDetail.Fail.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in subjectDetail.Fail)
+                                {
+                                    var sub = student.Subjects.FirstOrDefault(x => x.Key.Equals(subjectDetail.SubjectCode));
+                                    <tr>
+                                        <td>@student.RollNumber</td>
+                                        <td>@student.Name</td>
+                                        <td>@sub.Value.Marks</td>
+                                        <td>@sub.Value.Grade</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>No students scored in this range.</div>
+                    }
+                </div>
+
+
+                <br />
+
+            }@* //Outermost for *@
+
         </div>
-    }
-</div>
 
-<style>
-    .subject-reports-container {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-    }
+    </div>@* //end card body div *@
 
-    .subject-report {
-        margin-bottom: 40px;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+</div>@* //end outermost Div *@
 
-    .subject-report h2 {
-        color: #2c3e50;
-        border-bottom: 2px solid #3498db;
-        padding-bottom: 10px;
-    }
 
-    .marks-category, .result-category {
-        margin: 15px 0;
-    }
 
-    .marks-category h3, .result-category h3 {
-        color: #2980b9;
-        margin-bottom: 10px;
-    }
 
-    .student-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 15px;
-    }
 
-    .student-table th {
-        background-color: #3498db;
-        color: white;
-        padding: 8px;
-        text-align: left;
-    }
-
-    .student-table td {
-        padding: 8px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .student-table tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    .subject-divider {
-        border: 0;
-        height: 1px;
-        background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
-        margin: 30px 0;
-    }
-</style> *@
