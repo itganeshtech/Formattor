@@ -5,6 +5,7 @@ using FormatModals;
 using FormatResult.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Web;
 
@@ -131,8 +132,7 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        // Calculating percentage of all students
-        var allToppers = schoolResult.Students.OrderByDescending(x => x.Percentage).ToList();
+        List <Student> allToppers = GetAllStudentsPercentLocal(schoolResult);
 
         //return PartialView("_PercentPartial", allToppers);
         return PartialView("_AllStudentsPercent", allToppers);
@@ -164,31 +164,8 @@ public class FileUploadController : Controller
                                     .Take(3))
                                 .ToList();*/
 
-        var subjectwiseToppers = schoolResult.Students
-            .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
-            {
-                Name = student.Name,
-                RollNumber = student.RollNumber,
-                SubjectCode = subject.Key,
-                SubjectName = subject.Value.SubjectName,
-                Marks = subject.Value.Marks
-            })
-            .GroupBy(s => s.SubjectCode)
-            .SelectMany(group =>
-            {
-                // Get the top 3 distinct marks for the subject
-                var topMarks = group
-                    .OrderByDescending(s => s.Marks)
-                    .Select(s => s.Marks)
-                    .Distinct()
-                    .Take(3)
-                    .ToHashSet(); // Using HashSet for fast lookup
-
-                // Return all students who have those marks
-                return group.Where(s => topMarks.Contains(s.Marks))
-                .OrderByDescending(s => s.Marks);
-            })
-            .ToList();
+        
+        List<SubjectWiseResultViewModel> subjectwiseToppers=GetSubjectWiseTopperLocal(schoolResult);
 
         return PartialView("_SubjectWiseTopperPartial", subjectwiseToppers);
     }
@@ -203,28 +180,10 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        // Display students who scored 100 in any subject
-        var subjectWiseCenturions = schoolResult.Students
-        .SelectMany(student => student.Subjects
-            .Where(subject => subject.Value.Marks == 100)
-            .Select(subject => new FullMarksViewModel
-            {
-                SubjectCode = subject.Key,
-                SubjectName = subject.Value.SubjectName,
-                RollNumber = student.RollNumber,
-                Name = student.Name,
-                Marks = subject.Value.Marks,
-                Percentage = student.Percentage,
-                Gender = student.Gender,
-                OverallResult = student.OverallResult,
-                Subjects = student.Subjects
-            }))
-        .ToList();
-
-        var groupViewModel = subjectWiseCenturions.GroupBy(x => x.RollNumber);
+        FullMarksViewModel fullMarksViewModel = GetFullMarksViewModelLocal(schoolResult);
 
         // return PartialView("_FullMarksPartial", subjectWiseCenturions);
-        return PartialView("_FullMarksPartial", groupViewModel);
+        return PartialView("_FullMarksPartial", fullMarksViewModel);
     }
 
     // GET SUBJECT WISE FULL DETAIL OF STUDENTS LIKE SUBJECT TOPPER AND STUDENTS IN 90S AND 80S AND 70S
@@ -374,6 +333,11 @@ public class FileUploadController : Controller
 
         OverallSummaryViewModel viewModel = GetOverallSummaryViewModelLocal(schoolResult);
         FirstToppersViewModel firstToppersViewModel = GetFirstToppersViewModelLocal(schoolResult);
+        List<Student> allToppers = GetAllStudentsPercentLocal(schoolResult);
+        FullMarksViewModel fullMarksViewModel = GetFullMarksViewModelLocal(schoolResult);
+
+       // SubjectFullDetailsViewModel subjectFullDetailsViewModel = GetSubjectFullDetailsViewModelLocal(schoolResult);
+      //  SubjectWiseResultViewModel subjectWiseResultViewModel = GetSubjectWiseResultViewModelLocal();
 
         using (var workbook = new XLWorkbook())
         {
@@ -456,8 +420,8 @@ public class FileUploadController : Controller
             CountAbove95 = schoolResult.Students.Count(s => s.Percentage > 95),
             CountAbove90 = schoolResult.Students.Count(s => s.Percentage > 90),
             CountPass = schoolResult.Students.Count(s => s.OverallResult.Equals("Pass", StringComparison.OrdinalIgnoreCase)),
-            CountFail = schoolResult.Students.Count(s => s.OverallResult.Equals("Fail", StringComparison.OrdinalIgnoreCase)),
-            CountCompartment = schoolResult.Students.Count(s => s.OverallResult.Equals("Compartment", StringComparison.OrdinalIgnoreCase)),
+            CountFail = schoolResult.Students.Count(s => s.OverallResult.Equals("FAIL", StringComparison.OrdinalIgnoreCase)),
+            CountCompartment = schoolResult.Students.Count(s => s.OverallResult.Equals("COMP", StringComparison.OrdinalIgnoreCase)),
             MaxPercentage = maxPercentage
         };
 
@@ -502,6 +466,78 @@ public class FileUploadController : Controller
 
         return firstToppersViewModel;
     }
+
+    private FullMarksViewModel GetFullMarksViewModelLocal(SchoolResult schoolResult)
+    {
+
+        // Display students who scored 100 in any subject
+        var subjectWiseCenturions = schoolResult.Students
+        .SelectMany(student => student.Subjects
+            .Where(subject => subject.Value.Marks == 100)
+            .Select(subject => new FullMarksViewModel
+            {
+                SubjectCode = subject.Key,
+                SubjectName = subject.Value.SubjectName,
+                RollNumber = student.RollNumber,
+                Name = student.Name,
+                Marks = subject.Value.Marks,
+                Percentage = student.Percentage,
+                Gender = student.Gender,
+                OverallResult = student.OverallResult,
+                Subjects = student.Subjects
+            }))
+        .ToList();
+        var groupViewModel = subjectWiseCenturions.GroupBy(x => x.RollNumber).ToList();
+
+        return groupViewModel;
+    }
+
+
+    private List<Student> GetAllStudentsPercentLocal(SchoolResult schoolResult)
+    {
+        // Calculating percentage of all students
+        var allToppers = schoolResult.Students.OrderByDescending(x => x.Percentage).ToList();
+        return allToppers;
+    }
+
+    private SubjectWiseResultViewModel GetSubjectWiseTopperLocal(SchoolResult schoolResult)
+    {
+        var subjectwiseToppers = schoolResult.Students
+            .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
+            {
+                Name = student.Name,
+                RollNumber = student.RollNumber,
+                SubjectCode = subject.Key,
+                SubjectName = subject.Value.SubjectName,
+                Marks = subject.Value.Marks
+            })
+            .GroupBy(s => s.SubjectCode)
+            .SelectMany(group =>
+            {
+                // Get the top 3 distinct marks for the subject
+                var topMarks = group
+                    .OrderByDescending(s => s.Marks)
+                    .Select(s => s.Marks)
+                    .Distinct()
+                    .Take(3)
+                    .ToHashSet(); // Using HashSet for fast lookup
+
+                // Return all students who have those marks
+                return group.Where(s => topMarks.Contains(s.Marks))
+                .OrderByDescending(s => s.Marks);
+            })
+            .ToList();
+
+        return subjectwiseToppers;
+    }
+
+    //private SubjectFullDetailsViewModel GetSubjectFullDetailsViewModelLocal(SchoolResult schoolResult)
+    //{
+    //    return;
+    //}
+
+
+
 
     #endregion
 }

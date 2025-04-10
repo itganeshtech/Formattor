@@ -26,7 +26,7 @@ body {
 .fancy-heading {
     font-size: 2rem;
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     background: linear-gradient(90deg, #4b0082, /* Indigo */
     #2c3e50, /* Dark Blue */
     #8e44ad, /* Dark Purple */

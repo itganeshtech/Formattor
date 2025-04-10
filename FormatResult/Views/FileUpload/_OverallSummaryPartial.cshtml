@@ -3,7 +3,7 @@
 
 <div class="card shadow-lg p-3 mb-5 bg-white rounded">
     <div class="card-header bg-primary text-white">
-        <h4><i class="bi bi-graph-up-arrow"></i>School Performance Summary</h4>
+        <h4><i class="bi bi-graph-up-arrow"></i>📜School Performance Summary</h4>
     </div>
     <div class="card-body">
         <div class="row mb-1">
@@ -14,11 +14,11 @@
             </div>
             <div class="col-md-6">
                 <div class="alert alert-secondary">
-                    <h5 class="mb-2">📊 Quick Stats</h5>
-                    <p class="mb-1"><strong>Total Students:</strong> @Model.SchoolResult.Students.Count</p>
-                    <p class="mb-1"><strong>Highest Percentage:</strong> @Model.MaxPercentage.ToString("0.00")%</p>
-                    <p class="mb-1"><strong>Compartment:</strong> @Model.CountCompartment</p>
-                    <p class="mb-0"><strong>Fail:</strong> @Model.CountFail</p>
+                    <h5 class="mb-2">📊 <strong>Quick Stats</strong></h5>
+                    <p class="mb-1"><strong>Total Students: @Model.SchoolResult.Students.Count</strong></p>
+                    <p class="mb-1"><strong>Highest Percentage: @Model.MaxPercentage.ToString("0.00")%</strong></p>
+                    <p class="mb-1"><strong>Compartment: @Model.CountCompartment</strong></p>
+                    <p class="mb-0"><strong>Fail: @Model.CountFail</strong></p>
                 </div>
             </div>
         </div>
