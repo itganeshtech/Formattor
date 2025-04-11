@@ -106,7 +106,7 @@ public class FileUploadController : Controller
     }
 
     //TO DISPLAY First Toppers
-    public IActionResult GetTopPerformersPercentWise()
+    public IActionResult GetFirstToppersPercentWise()
     {
 
         // Deserialize the JSON string back to SchoolResult object
@@ -118,7 +118,7 @@ public class FileUploadController : Controller
 
         FirstToppersViewModel firstToppersViewModel = GetFirstToppersViewModelLocal(schoolResult);
 
-        return PartialView("_TopPerformersPercentWise", firstToppersViewModel);
+        return PartialView("_FirstToppersPercentWise", firstToppersViewModel);
     }
 
     //TO DISPLAY PERCENTAGE OF ALL THE STUDENTS
@@ -334,9 +334,9 @@ public class FileUploadController : Controller
         FirstToppersViewModel firstToppersViewModel = GetFirstToppersViewModelLocal(schoolResult);
         List<Student> allToppers = GetAllStudentsPercentLocal(schoolResult);
         List<IGrouping<string, FullMarksViewModel>> fullMarksViewModel = GetFullMarksViewModelLocal(schoolResult);
+        List<SubjectWiseResultViewModel> subjectWiseResultViewModel = GetSubjectWiseTopperLocal(schoolResult);
+        SubjectFullDetailsViewModel subjectFullDetailsViewModel = GetSubjectFullDetailsViewModelLocal(schoolResult);
 
-        // SubjectFullDetailsViewModel subjectFullDetailsViewModel = GetSubjectFullDetailsViewModelLocal(schoolResult);
-        //  SubjectWiseResultViewModel subjectWiseResultViewModel = GetSubjectWiseResultViewModelLocal();
 
         using (var workbook = new XLWorkbook())
         {
@@ -529,10 +529,10 @@ public class FileUploadController : Controller
         return subjectwiseToppers;
     }
 
-    //private SubjectFullDetailsViewModel GetSubjectFullDetailsViewModelLocal(SchoolResult schoolResult)
-    //{
-    //    return;
-    //}
+    private SubjectFullDetailsViewModel GetSubjectFullDetailsViewModelLocal(SchoolResult schoolResult)
+    {
+        return;
+    }
 
     #endregion
 }
