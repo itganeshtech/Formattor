@@ -53,3 +53,28 @@ body {
         background-position: 0% 50%;
     }
 }
+/*Glowing effect on text*/
+.glow-effect {
+    color: #00008B;
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
+    animation: glowPulse 1.5s infinite alternate;
+}
+
+@keyframes glowPulse {
+    from {
+        text-shadow: 0 0 5px #0ff, 0 0 10px #ff0, 0 0 20px #0ff;
+    }
+
+    to {
+        text-shadow: 0 0 10px #f0f, 0 0 20px #f0f, 0 0 30px #f0f, 0 0 50px #f0f;
+    }
+}
+
+/* Download text formating*/
+.ddownload-text {
+    font-size: 24px;
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}

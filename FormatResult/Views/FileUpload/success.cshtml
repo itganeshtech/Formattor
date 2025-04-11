@@ -9,9 +9,10 @@
         <p >File Name: <strong>@Model.FileName</strong></p>
         <p >School Name: <strong>@Model.SchoolResult.SchoolName</strong></p>
         <p >Total Number of Students Enrolled: <strong>@Model.SchoolResult.Students.Count</strong></p>
+
         <a asp-controller="FileUpload" asp-action="DownloadExcel" class="btn btn-secondary">
-               Download Results in Excel
-        </a>
+            <span class="ddownload-text">Click Here To Download All Results in Excel</span>&nbsp;&nbsp; <img src="~/images/download.png" width="40" height="40" alt="download image" />
+        </a> 
     </div>
 </div>
 
@@ -36,7 +37,7 @@
             <a class="nav-link fs-5" id="tabFullMarks" data-url="@Url.Action("GetFullMarks", "FileUpload")" href="#"><strong>100Marks</strong> </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link fs-5" id="tabSubjectWiseDetails" data-url="@Url.Action("GetSubjectFullDetails", "FileUpload")" href="#"><strong>SubjectWiseDetails</strong></a>
+            <a class="nav-link fs-5" id="tabSubjectWiseDetails" data-url="@Url.Action("GetSubjectFullDetails", "FileUpload")" href="#"><strong><div class="glow-effect">SubjectWiseDetails</div></strong></a>
         </li>
 
     </ul>
