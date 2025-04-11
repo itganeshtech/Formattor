@@ -1,4 +1,3 @@
-using AspNetCoreGeneratedDocument;
 using BusinessLogic;
 using ClosedXML.Excel;
 using FormatModals;
@@ -132,7 +131,7 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        List <Student> allToppers = GetAllStudentsPercentLocal(schoolResult);
+        List<Student> allToppers = GetAllStudentsPercentLocal(schoolResult);
 
         //return PartialView("_PercentPartial", allToppers);
         return PartialView("_AllStudentsPercent", allToppers);
@@ -164,8 +163,8 @@ public class FileUploadController : Controller
                                     .Take(3))
                                 .ToList();*/
 
-        
-        List<SubjectWiseResultViewModel> subjectwiseToppers=GetSubjectWiseTopperLocal(schoolResult);
+
+        List<SubjectWiseResultViewModel> subjectwiseToppers = GetSubjectWiseTopperLocal(schoolResult);
 
         return PartialView("_SubjectWiseTopperPartial", subjectwiseToppers);
     }
@@ -180,7 +179,7 @@ public class FileUploadController : Controller
             ? JsonConvert.DeserializeObject<SchoolResult>(schoolResultJson)
             : new SchoolResult(); // Fallback if nothing is passed
 
-        FullMarksViewModel fullMarksViewModel = GetFullMarksViewModelLocal(schoolResult);
+        List<IGrouping<string, FullMarksViewModel>> fullMarksViewModel = GetFullMarksViewModelLocal(schoolResult);
 
         // return PartialView("_FullMarksPartial", subjectWiseCenturions);
         return PartialView("_FullMarksPartial", fullMarksViewModel);
@@ -334,10 +333,10 @@ public class FileUploadController : Controller
         OverallSummaryViewModel viewModel = GetOverallSummaryViewModelLocal(schoolResult);
         FirstToppersViewModel firstToppersViewModel = GetFirstToppersViewModelLocal(schoolResult);
         List<Student> allToppers = GetAllStudentsPercentLocal(schoolResult);
-        FullMarksViewModel fullMarksViewModel = GetFullMarksViewModelLocal(schoolResult);
+        List<IGrouping<string, FullMarksViewModel>> fullMarksViewModel = GetFullMarksViewModelLocal(schoolResult);
 
-       // SubjectFullDetailsViewModel subjectFullDetailsViewModel = GetSubjectFullDetailsViewModelLocal(schoolResult);
-      //  SubjectWiseResultViewModel subjectWiseResultViewModel = GetSubjectWiseResultViewModelLocal();
+        // SubjectFullDetailsViewModel subjectFullDetailsViewModel = GetSubjectFullDetailsViewModelLocal(schoolResult);
+        //  SubjectWiseResultViewModel subjectWiseResultViewModel = GetSubjectWiseResultViewModelLocal();
 
         using (var workbook = new XLWorkbook())
         {
@@ -467,7 +466,7 @@ public class FileUploadController : Controller
         return firstToppersViewModel;
     }
 
-    private FullMarksViewModel GetFullMarksViewModelLocal(SchoolResult schoolResult)
+    private List<IGrouping<string, FullMarksViewModel>> GetFullMarksViewModelLocal(SchoolResult schoolResult)
     {
 
         // Display students who scored 100 in any subject
@@ -492,7 +491,6 @@ public class FileUploadController : Controller
         return groupViewModel;
     }
 
-
     private List<Student> GetAllStudentsPercentLocal(SchoolResult schoolResult)
     {
         // Calculating percentage of all students
@@ -500,7 +498,7 @@ public class FileUploadController : Controller
         return allToppers;
     }
 
-    private SubjectWiseResultViewModel GetSubjectWiseTopperLocal(SchoolResult schoolResult)
+    private List<SubjectWiseResultViewModel> GetSubjectWiseTopperLocal(SchoolResult schoolResult)
     {
         var subjectwiseToppers = schoolResult.Students
             .SelectMany(student => student.Subjects, (student, subject) => new SubjectWiseResultViewModel
@@ -535,9 +533,6 @@ public class FileUploadController : Controller
     //{
     //    return;
     //}
-
-
-
 
     #endregion
 }
